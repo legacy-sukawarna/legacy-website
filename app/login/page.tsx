@@ -1,56 +1,36 @@
+"use client";
 import Link from "next/link";
-import { headers } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 import { SubmitButton } from "./submit-button";
+import { signIn, signUp, signInWithGoogleOAuth } from "./actions";
+import { createClient } from "@/utils/supabase/client";
 
-export default function Login({
+export default async function Login({
   searchParams,
 }: {
   searchParams: { message: string };
 }) {
-  const signIn = async (formData: FormData) => {
-    "use server";
-
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const supabase = createClient();
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      return redirect("/login?message=Could not authenticate user");
+  const handleSignInWithGoogle = async () => {
+    try {
+      await signInWithGoogleOAuth();
+    } catch (error) {
+      console.error("Fehler beim Anmelden mit Google: ", error);
     }
-
-    return redirect("/protected");
   };
 
-  const signUp = async (formData: FormData) => {
-    "use server";
-
-    const origin = headers().get("origin");
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+  const handleResetPassword = async () => {
     const supabase = createClient();
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      return redirect("/login?message=Could not authenticate user");
+    const email = prompt("Für welche Email");
+    if (!email) {
+      console.error("No valid Email");
+      return;
     }
-
-    return redirect("/login?message=Check email to continue sign in process");
+    email.trim();
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/password-reset`,
+    });
+    if (data) alert("Recovery Link sent to " + email);
+    if (error) alert("Error while sending password reset link to " + email);
   };
-
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
       <Link
@@ -73,47 +53,62 @@ export default function Login({
         </svg>{" "}
         Back
       </Link>
+      <div className="flex flex-col gap-9 ">
+        <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
+          <label className="text-md" htmlFor="email">
+            Email
+          </label>
+          <input
+            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+            name="email"
+            placeholder="you@example.com"
+            required
+          />
+          <label className="text-md" htmlFor="password">
+            Password
+          </label>
+          <input
+            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+            type="password"
+            name="password"
+            placeholder="••••••••"
+            //required
+          />
+          <SubmitButton
+            formAction={signIn}
+            className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
+            pendingText="Signing In..."
+          >
+            Sign In
+          </SubmitButton>
+          <SubmitButton
+            formAction={signUp}
+            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+            pendingText="Signing Up..."
+          >
+            Sign Up
+          </SubmitButton>
 
-      <form className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
-        <label className="text-md" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="email"
-          placeholder="you@example.com"
-          required
-        />
-        <label className="text-md" htmlFor="password">
-          Password
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          type="password"
-          name="password"
-          placeholder="••••••••"
-          required
-        />
-        <SubmitButton
-          formAction={signIn}
-          className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
-          pendingText="Signing In..."
-        >
-          Sign In
-        </SubmitButton>
-        <SubmitButton
-          formAction={signUp}
+          {searchParams?.message && (
+            <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+              {searchParams.message}
+            </p>
+          )}
+        </form>
+
+        <button
+          onClick={handleSignInWithGoogle}
           className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
-          pendingText="Signing Up..."
         >
-          Sign Up
-        </SubmitButton>
-        {searchParams?.message && (
-          <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-            {searchParams.message}
-          </p>
-        )}
-      </form>
+          Sign In with Google
+        </button>
+        <button
+          onClick={handleResetPassword}
+          className="font-extralight text-left text-blue-400"
+        >
+          Forgot password
+        </button>
+      </div>
     </div>
   );
 }
