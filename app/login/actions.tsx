@@ -56,3 +56,18 @@ export const signInWithGoogleOAuth = async () => {
   }
   return redirect(data.url);
 };
+
+export const handleResetPassword = async () => {
+  const supabase = createClient();
+  const email = prompt("Für welche Email");
+  if (!email) {
+    console.error("No valid Email");
+    return;
+  }
+  email.trim();
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/password-reset`,
+  });
+  if (data) alert("Recovery Link sent to " + email);
+  if (error) alert("Error while sending password reset link to " + email);
+};

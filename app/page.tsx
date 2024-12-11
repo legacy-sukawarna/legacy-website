@@ -1,33 +1,24 @@
-import AuthButton from "../components/AuthButton";
+import Link from "next/link";
 import Header from "@/components/Header";
+import { Button } from "@/components/ui/button";
+import Footer from "@/components/Footer";
 
 export default async function Index() {
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-        <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-          <AuthButton />
-        </div>
-      </nav>
+      <Header />
 
-      <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
-        <Header />
-        <main className="flex-1 flex flex-col gap-6">test</main>
+      <div className="flex flex-col items-center justify-center flex-1">
+        <h1 className="text-4xl font-bold mb-6">Welcome to Legacy</h1>
+        <p className="text-xl mb-8 text-center max-w-2xl">
+          Join our community and stay connected with events, services, and more.
+        </p>
+        <Link href="/login">
+          <Button size="lg">Get Started</Button>
+        </Link>
       </div>
 
-      <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
-        <p>
-          Powered by{" "}
-          <a
-            href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-            target="_blank"
-            className="font-bold hover:underline"
-            rel="noreferrer"
-          >
-            Supabase
-          </a>
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

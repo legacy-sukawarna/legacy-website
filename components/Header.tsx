@@ -1,44 +1,57 @@
-import NextLogo from "./NextLogo";
-import SupabaseLogo from "./SupabaseLogo";
+"use client";
+import Link from "next/link";
+import LegacyLogo from "../public/assets/legacy-logo-white.png";
+import { Button } from "./ui/button";
+import Image from "next/image";
+import { createClient } from "@/utils/supabase/client";
+import { useEffect } from "react";
 
 export default function Header() {
+  const supabase = createClient();
+
   return (
-    <div className="flex flex-col gap-16 items-center">
-      <div className="flex gap-8 justify-center items-center">
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <SupabaseLogo />
-        </a>
-        <span className="border-l rotate-45 h-6" />
-        <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
-          <NextLogo />
-        </a>
+    <header className="shadow-sm w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-4 md:justify-start md:space-x-10">
+          <div className="flex justify-start lg:w-0 lg:flex-1">
+            <Link href="/" className="text-2xl font-bold text-blue-600">
+              <Image
+                src={LegacyLogo}
+                alt="Legacy Logo"
+                width={100}
+                height={50}
+              />
+            </Link>
+          </div>
+          <nav className="hidden md:flex space-x-10">
+            <Link
+              href="#about"
+              className="text-base font-medium hover:text-gray-500"
+            >
+              About
+            </Link>
+            <Link
+              href="#services"
+              className="text-base font-medium hover:text-gray-500"
+            >
+              Services
+            </Link>
+            <Link
+              href="#events"
+              className="text-base font-medium hover:text-gray-500"
+            >
+              Events
+            </Link>
+          </nav>
+          <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
+            <Link href="/login">
+              <Button variant="outline" className="ml-8">
+                Log in
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
-      <h1 className="sr-only">Supabase and Next.js/Prisma/Shadcn Template</h1>
-      <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
-        The fastest way to build apps with{" "}
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Supabase
-        </a>{" "}
-        and{" "}
-        <a
-          href="https://nextjs.org/"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Next.js
-        </a>
-      </p>
-      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
-    </div>
+    </header>
   );
 }

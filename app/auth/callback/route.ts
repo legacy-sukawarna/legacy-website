@@ -9,11 +9,13 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get("code");
   const origin = requestUrl.origin;
 
+  console.log("🚀 ~ GET ~ code:", code);
+
   if (code) {
     const supabase = createClient();
     const session = await supabase.auth.exchangeCodeForSession(code);
   }
 
   // URL to redirect to after sign up process completes
-  return NextResponse.redirect(`${origin}/protected`);
+  return NextResponse.redirect(`${origin}/dashboard`);
 }

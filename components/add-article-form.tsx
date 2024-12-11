@@ -1,5 +1,5 @@
-import { db } from "@/src/lib/prisma";
-import { createArticle } from "@/src/lib/queries";
+import { db } from "@/lib/prisma";
+import { createArticle } from "@/lib/queries";
 import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
 
