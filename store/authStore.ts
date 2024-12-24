@@ -1,5 +1,5 @@
 // store/authStore.ts
-import { Session, User } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import { create } from "zustand";
 
 interface AuthState {

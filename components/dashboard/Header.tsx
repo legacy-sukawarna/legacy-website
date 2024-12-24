@@ -14,7 +14,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
   const { user, clearUser } = useAuthStore();
 
   return (
-    <header className="shadow-md py-4 px-6 flex justify-between items-center">
+    <header className="shadow-md py-4 px-6 flex justify-between items-center lg:hidden">
       <div className="flex items-center">
         <Button
           variant="ghost"
