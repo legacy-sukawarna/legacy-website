@@ -6,13 +6,14 @@ import {
   FileText,
   LayoutDashboard,
   LogOut,
+  UserCog,
   Users,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
 import { useAuthStore } from "@/store/authStore";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface SidebarProps {
   open: boolean;
@@ -23,6 +24,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
   const supabase = createClient();
   const { user, clearUser } = useAuthStore();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLinkClick = () => {
     setOpen(false);
@@ -48,7 +50,9 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
           <li className="mb-2">
             <Link
               href="/dashboard"
-              className="flex items-center p-2 rounded hover:bg-gray-700"
+              className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                pathname === "/dashboard" ? "bg-gray-700 font-medium" : ""
+              }`}
               onClick={handleLinkClick}
             >
               <LayoutDashboard className="mr-2" />
@@ -59,7 +63,12 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
             <li className="mb-2">
               <Link
                 href="/dashboard/connect"
-                className="flex items-center p-2 rounded hover:bg-gray-700"
+                className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                  pathname === "/dashboard/connect"
+                    ? "bg-gray-700 font-medium"
+                    : ""
+                }`}
+                onClick={handleLinkClick}
               >
                 <FileText className="mr-2" />
                 Connect
@@ -70,12 +79,32 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
           {(user?.role === "ADMIN" || user?.role === "MENTOR") && (
             <li className="mb-2">
               <Link
-                href="/dashboard/connect-absence"
-                className="flex items-center p-2 rounded hover:bg-gray-700"
+                href="/dashboard/connect-attendance"
+                className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                  pathname === "/dashboard/connect-attendance"
+                    ? "bg-gray-700 font-medium"
+                    : ""
+                }`}
                 onClick={handleLinkClick}
               >
                 <Users className="mr-2" />
-                Connect Absence
+                Connect Attendance
+              </Link>
+            </li>
+          )}
+
+          {user?.role === "ADMIN" && (
+            <li className="mb-2">
+              <Link
+                href="/dashboard/user-management"
+                className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                  pathname === "/dashboard/user-management"
+                    ? "bg-gray-700 font-medium"
+                    : ""
+                }`}
+              >
+                <UserCog className="mr-2" />
+                User Management
               </Link>
             </li>
           )}
@@ -83,7 +112,11 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
           <li className="mb-2">
             <Link
               href="/dashboard/event-attendance"
-              className="flex items-center p-2 rounded hover:bg-gray-700"
+              className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                pathname === "/dashboard/event-attendance"
+                  ? "bg-gray-700 font-medium"
+                  : ""
+              }`}
               onClick={handleLinkClick}
             >
               <Calendar className="mr-2" />

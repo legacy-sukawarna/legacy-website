@@ -2,8 +2,11 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
+import { checkAuth } from "@/lib/auth";
 
 export default async function Index() {
+  await checkAuth("dashboard"); // Will redirect to dashboard if authenticated
+
   return (
     <div className="w-full flex flex-col gap-20 items-center justify-center h-full">
       <Header />

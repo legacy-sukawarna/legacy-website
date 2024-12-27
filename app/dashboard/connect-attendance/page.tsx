@@ -1,16 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { redirect } from "next/navigation";
+import { useState, useEffect } from "react";
+import { redirect, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { AbsenceList } from "../../../components/dashboard/connect-absence/AbsenceList";
-import ConnectAbsenceForm from "../../../components/dashboard/connect-absence/ConnectAbsenceForm";
+import { AbsenceList } from "../../../components/dashboard/connect-attendance/AbsenceList";
+import ConnectAbsenceForm from "../../../components/dashboard/connect-attendance/ConnectAbsenceForm";
 import { useAuthStore } from "@/store/authStore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ConnectAbsencePage() {
   const { user } = useAuthStore();
-  const [activeTab, setActiveTab] = useState("form");
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "form");
+
+  // Update active tab when query param changes
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "form" || tab === "list") {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   if (!user || (user.role !== "MENTOR" && user.role !== "ADMIN")) {
     redirect("/dashboard");

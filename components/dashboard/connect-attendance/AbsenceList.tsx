@@ -23,6 +23,13 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function AbsenceList() {
   const { user, session } = useAuthStore();
@@ -40,8 +47,8 @@ export function AbsenceList() {
     from: startOfMonth(new Date()),
     to: new Date(),
   });
+  const [limit, setLimit] = useState(10);
 
-  console.log(absences);
   const fetchAbsences = async (page: number = 1) => {
     try {
       const response = await axios.get(
@@ -52,7 +59,7 @@ export function AbsenceList() {
           },
           params: {
             page,
-            limit: 10,
+            limit,
             start_date: date?.from?.toISOString(),
             end_date: date?.to?.toISOString(),
             group_id: user?.group_id,
@@ -67,7 +74,7 @@ export function AbsenceList() {
 
   useEffect(() => {
     fetchAbsences(currentPage);
-  }, [currentPage, date]);
+  }, [currentPage, date, limit]);
 
   return (
     <Card>
@@ -137,9 +144,28 @@ export function AbsenceList() {
           </Table>
 
           <div className="flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              Showing {absences.records.length} of {absences.pagination.total}{" "}
-              results
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                Showing {absences.records.length} of {absences.pagination.total}{" "}
+                results
+              </div>
+              <Select
+                value={limit.toString()}
+                onValueChange={(value) => {
+                  setLimit(Number(value));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[100px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex gap-2">
               <Button

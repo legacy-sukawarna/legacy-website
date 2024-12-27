@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { addDays, format, startOfMonth } from "date-fns";
+import { format, startOfMonth } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
@@ -30,6 +30,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ConnectReportButton from "./ConnectReportButton";
+import { redirect } from "next/navigation";
 
 export function MentorAbsenceList() {
   const { user, session } = useAuthStore();
@@ -49,6 +51,10 @@ export function MentorAbsenceList() {
   });
   const [groups, setGroups] = useState<Array<{ id: string; name: string }>>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string>("all");
+
+  if (!user || user.role !== "ADMIN") {
+    redirect("/dashboard");
+  }
 
   const fetchGroups = async () => {
     try {
@@ -155,6 +161,11 @@ export function MentorAbsenceList() {
                 />
               </PopoverContent>
             </Popover>
+
+            <ConnectReportButton
+              startDate={dateRange?.from?.toISOString()}
+              endDate={dateRange?.to?.toISOString()}
+            />
           </div>
 
           <Table>
