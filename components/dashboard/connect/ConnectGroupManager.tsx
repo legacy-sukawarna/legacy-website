@@ -22,6 +22,7 @@ import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
 import { ConnectGroupDialog } from "./ConnectGroupDialog";
+import { toast } from "@/components/ui/use-toast";
 
 export function ConnectGroupManager() {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -29,7 +30,7 @@ export function ConnectGroupManager() {
   const [editingGroup, setEditingGroup] = useState<any>(null);
   const [newGroup, setNewGroup] = useState({
     name: "",
-    mentor: "",
+    mentor_id: "",
   });
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [groupToDelete, setGroupToDelete] = useState<string | null>(null);
@@ -37,54 +38,87 @@ export function ConnectGroupManager() {
   const [mentors, setMentors] = useState<User[]>([]);
 
   const handleCreateOrUpdate = async () => {
-    if (editingGroup) {
-      const group = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/connect-groups/${editingGroup.id}`,
-        newGroup,
-        {
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
+    try {
+      if (editingGroup) {
+        await axios.put(
+          `${process.env.NEXT_PUBLIC_API_URL}/connect-groups/${editingGroup.id}`,
+          {
+            name: newGroup.name,
+            mentor_id: newGroup.mentor_id,
           },
-        }
-      );
-    } else {
-      const group = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/connect-groups`,
-        newGroup,
-        {
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.access_token}`,
+            },
+          }
+        );
+        toast({
+          title: "Success",
+          description: "Group updated successfully",
+        });
+      } else {
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/connect-groups`,
+          {
+            name: newGroup.name,
+            mentor_id: newGroup.mentor_id,
           },
-        }
-      );
-    }
-    setIsOpen(false);
-    setEditingGroup(null);
-    setNewGroup({ name: "", mentor: "" });
-  };
-
-  const fetchMentors = async () => {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/`,
-      {
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        params: {
-          role: "MENTOR",
-          limit: 1000,
-        },
+          {
+            headers: {
+              Authorization: `Bearer ${session?.access_token}`,
+            },
+          }
+        );
+        toast({
+          title: "Success",
+          description: "Group created successfully",
+        });
       }
-    );
-    setMentors(response.data.results);
+
+      setIsOpen(false);
+      setEditingGroup(null);
+      setNewGroup({ name: "", mentor_id: "" });
+      fetchGroups();
+    } catch (error: any) {
+      console.error("Error creating or updating group:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.response.data.messages[0],
+      });
+    }
   };
 
-  const handleDelete = () => {
-    // if (groupToDelete !== null) {
-    //   setGroups(groups.filter((g) => g.id !== groupToDelete));
-    //   setDeleteConfirmOpen(false);
-    //   setGroupToDelete(null);
-    // }
+  const handleDelete = async () => {
+    if (groupToDelete !== null) {
+      try {
+        await axios.delete(
+          `${process.env.NEXT_PUBLIC_API_URL}/connect-groups/${groupToDelete}`,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.access_token}`,
+            },
+          }
+        );
+
+        toast({
+          title: "Success",
+          description: "Group deleted successfully",
+        });
+
+        await fetchGroups(); // Refresh the groups list
+        setDeleteConfirmOpen(false);
+        setGroupToDelete(null);
+      } catch (error: any) {
+        console.error("Error deleting group:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description:
+            error.response?.data?.messages?.[0] || "Failed to delete group",
+        });
+      }
+    }
   };
 
   const openEditDialog = (group: any) => {
@@ -114,6 +148,22 @@ export function ConnectGroupManager() {
     }
   };
 
+  const fetchMentors = async () => {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/`,
+      {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        params: {
+          role: "MENTOR",
+          limit: 1000,
+        },
+      }
+    );
+    setMentors(response.data.results);
+  };
+
   useEffect(() => {
     fetchGroups();
     fetchMentors();
@@ -130,7 +180,7 @@ export function ConnectGroupManager() {
           <Button
             onClick={() => {
               setEditingGroup(null);
-              setNewGroup({ name: "", mentor: "" });
+              setNewGroup({ name: "", mentor_id: "" });
               setIsOpen(true);
             }}
           >

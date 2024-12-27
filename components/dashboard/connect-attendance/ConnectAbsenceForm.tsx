@@ -28,8 +28,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useAuthStore } from "@/store/authStore";
-import { createClient } from "@/utils/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   group_id: z.string({
@@ -44,8 +44,7 @@ const formSchema = z.object({
 
 export default function ConnectAbsenceForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, session, setSession } = useAuthStore();
-  const supabase = createClient();
+  const { user, session } = useAuthStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,18 +53,6 @@ export default function ConnectAbsenceForm() {
       group_id: "",
     },
   });
-
-  const getSession = async () => {
-    const { data, error } = await supabase.auth.getSession();
-    if (data.session) {
-      setSession(data.session);
-    }
-    console.log(data, error);
-  };
-
-  useEffect(() => {
-    getSession();
-  }, []);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
@@ -81,7 +68,7 @@ export default function ConnectAbsenceForm() {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/connect-attendance`,
         formData,
         {
@@ -91,14 +78,21 @@ export default function ConnectAbsenceForm() {
           },
         }
       );
-      console.log("Success:", response.data);
-    } catch (error) {
+      toast({
+        title: "Success",
+        description: "Attendance submitted successfully",
+      });
+    } catch (error: any) {
       console.error("Error:", error);
       if (axios.isAxiosError(error)) {
         console.error("Axios Error:", error.response);
-        // if (error.status === 401 || error.status === 403) {
-        //   supabase.auth.refreshSession();
-        // }
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description:
+            error.response?.data?.messages?.[0] ||
+            "Failed to submit attendance",
+        });
       }
     } finally {
       setIsSubmitting(false);

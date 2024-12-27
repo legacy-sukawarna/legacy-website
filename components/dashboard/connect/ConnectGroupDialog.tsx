@@ -22,7 +22,7 @@ interface ConnectGroupDialogProps {
   editingGroup: any | null;
   newGroup: {
     name: string;
-    mentor: string;
+    mentor_id: string;
   };
   setNewGroup: (group: any) => void;
   onSubmit: () => void;
@@ -71,23 +71,25 @@ export function ConnectGroupDialog({
             <Label htmlFor="mentor" className="text-right">
               Mentor
             </Label>
-            <Select
-              value={newGroup.mentor}
-              onValueChange={(value) =>
-                setNewGroup({ ...newGroup, mentor: value })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a mentor" />
-              </SelectTrigger>
-              <SelectContent>
-                {mentors?.map((mentor) => (
-                  <SelectItem key={mentor.id} value={mentor.id}>
-                    {mentor.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="col-span-3">
+              <Select
+                value={newGroup.mentor_id}
+                onValueChange={(value) =>
+                  setNewGroup({ ...newGroup, mentor_id: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a mentor" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mentors?.map((mentor) => (
+                    <SelectItem key={mentor.id} value={mentor.id}>
+                      {mentor.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
         <DialogFooter>

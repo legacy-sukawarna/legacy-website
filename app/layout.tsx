@@ -1,4 +1,5 @@
 // import { GeistSans } from "geist/font/sans";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 
@@ -27,6 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <main className="flex flex-col h-screen">{children}</main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
