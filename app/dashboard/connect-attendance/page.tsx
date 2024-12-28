@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { redirect, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { AbsenceList } from "../../../components/dashboard/connect-attendance/AbsenceList";
 import ConnectAbsenceForm from "../../../components/dashboard/connect-attendance/ConnectAbsenceForm";
 import { useAuthStore } from "@/store/authStore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function ConnectAbsencePage() {
+const ConnectAbsenceContent = () => {
   const { user } = useAuthStore();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "form");
@@ -41,5 +40,13 @@ export default function ConnectAbsencePage() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+};
+
+export default function ConnectAbsencePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ConnectAbsenceContent />
+    </Suspense>
   );
 }
