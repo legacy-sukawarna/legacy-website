@@ -109,7 +109,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
             </li>
           )}
 
-          <li className="mb-2">
+          {/* <li className="mb-2">
             <Link
               href="/dashboard/event-attendance"
               className={`flex items-center p-2 rounded hover:bg-gray-700 ${
@@ -122,7 +122,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
               <Calendar className="mr-2" />
               Event Attendance
             </Link>
-          </li>
+          </li> */}
           <li className="mb-2">
             <Button
               variant={"ghost"}
