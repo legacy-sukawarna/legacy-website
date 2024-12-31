@@ -15,5 +15,5 @@ export const useAuthStore = create<AuthState>((set) => ({
   session: null,
   setSession: (session) => set({ session }),
   setUser: (user) => set({ user }),
-  clearUser: () => set({ user: null }),
+  clearUser: () => set({ user: null, session: null }),
 }));

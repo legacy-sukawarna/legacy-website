@@ -41,6 +41,7 @@ export default function UserManagementPage() {
   const [itemsPerPage] = useState(10);
   const [groups, setGroups] = useState<any[]>([]);
   const { user } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(true);
 
   if (!user || user.role !== "ADMIN") {
     redirect("/dashboard");
@@ -112,21 +113,28 @@ export default function UserManagementPage() {
   };
 
   const fetchUsers = async (page = currentPage) => {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/users`,
-      {
-        params: {
-          page,
-          limit: itemsPerPage,
-          search: searchTerm,
-        },
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      }
-    );
-    const data = response.data;
-    setUsers(data);
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/users`,
+        {
+          params: {
+            page,
+            limit: itemsPerPage,
+            search: searchTerm,
+          },
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      );
+      const data = response.data;
+      setUsers(data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchGroups = async () => {
@@ -200,6 +208,7 @@ export default function UserManagementPage() {
             onPageChange={handlePageChange}
             onEdit={openEditDialog}
             onDelete={openDeleteConfirm}
+            isLoading={isLoading}
           />
         </CardContent>
       </Card>

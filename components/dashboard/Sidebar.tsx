@@ -128,7 +128,6 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
               variant={"ghost"}
               className="flex justify-start p-2 rounded hover:bg-gray-700 w-full"
               onClick={() => {
-                supabase.auth.signOut();
                 clearUser();
                 router.push("/");
                 setOpen(false);
