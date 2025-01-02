@@ -129,6 +129,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
               className="flex justify-start p-2 rounded hover:bg-gray-700 w-full"
               onClick={() => {
                 clearUser();
+                supabase.auth.signOut();
                 router.push("/");
                 setOpen(false);
               }}
