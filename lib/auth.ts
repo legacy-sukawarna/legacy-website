@@ -6,16 +6,16 @@ export async function checkAuth(
 ) {
   const supabase = createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (redirectTo === "dashboard" && session) {
+  if (redirectTo === "dashboard" && user) {
     redirect("/dashboard");
   }
 
-  if (redirectTo === "login" && !session) {
+  if (redirectTo === "login" && !user) {
     redirect("/login");
   }
 
-  return session;
+  return user;
 }
