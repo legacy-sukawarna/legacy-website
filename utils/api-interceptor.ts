@@ -49,7 +49,7 @@ export const setupAxiosInterceptors = ({
           // Logout user on refresh failure
           setUser(null);
           setSession(null);
-          router.push("/login");
+          router.push("/");
           return Promise.reject(error);
         }
       }
