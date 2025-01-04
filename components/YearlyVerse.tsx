@@ -1,6 +1,12 @@
 import { getBibleVerse } from "@/lib/getBibleVerse";
 
-export async function YearlyVerse({ verseKey }: { verseKey: number }) {
+export async function YearlyVerse({
+  verseKey,
+  name,
+}: {
+  verseKey: number;
+  name: string;
+}) {
   const verse = await getBibleVerse();
 
   if (!verse) {
@@ -13,6 +19,7 @@ export async function YearlyVerse({ verseKey }: { verseKey: number }) {
 
   return (
     <div className="space-y-4">
+      <p className="text-lg font-medium">{name},</p>
       <p className="text-lg font-medium">{verse.text}</p>
       <p className="text-sm text-gray-500">{verse.reference}</p>
     </div>
