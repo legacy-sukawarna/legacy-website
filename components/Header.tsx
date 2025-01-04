@@ -4,7 +4,6 @@ import LegacyLogo from "../public/assets/legacy-logo-white.png";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect } from "react";
 
 export default function Header() {
   const supabase = createClient();
@@ -41,6 +40,12 @@ export default function Header() {
               className="text-base font-medium hover:text-gray-500"
             >
               Events
+            </Link>
+            <Link
+              href="/yearly-verse"
+              className="text-base font-medium hover:text-gray-500"
+            >
+              Yearly Verse
             </Link>
           </nav>
           <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
