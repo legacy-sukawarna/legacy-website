@@ -2,6 +2,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
+import { Analytics } from "@vercel/analytics/next";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -29,6 +30,7 @@ export default function RootLayout({
         >
           <main className="flex flex-col h-screen">{children}</main>
           <Toaster />
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
