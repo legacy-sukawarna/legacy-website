@@ -61,7 +61,7 @@ export function ConnectGroupManager() {
           `${process.env.NEXT_PUBLIC_API_URL}/connect-groups`,
           {
             name: newGroup.name,
-            mentor_id: newGroup.mentor_id,
+            // mentor_id: newGroup.mentor_id,
           },
           {
             headers: {
@@ -191,8 +191,8 @@ export function ConnectGroupManager() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Mentor</TableHead>
-              <TableHead>Total Mentees</TableHead>
+              {/* <TableHead>Mentor</TableHead>
+              <TableHead>Total Mentees</TableHead> */}
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -200,8 +200,8 @@ export function ConnectGroupManager() {
             {groups.map((group) => (
               <TableRow key={group.id}>
                 <TableCell>{group.name}</TableCell>
-                <TableCell>{group.mentor.name}</TableCell>
-                <TableCell>{group.mentees.length}</TableCell>
+                {/* <TableCell>{group.mentor?.name || "-"}</TableCell>
+                <TableCell>{group.mentees.length}</TableCell> */}
                 <TableCell>
                   <Button
                     variant="ghost"

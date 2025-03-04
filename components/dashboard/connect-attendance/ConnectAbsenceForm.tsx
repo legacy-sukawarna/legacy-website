@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import axios from "axios";
 
@@ -30,6 +30,14 @@ import {
 import { useAuthStore } from "@/store/authStore";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 const formSchema = z.object({
   group_id: z.string({
@@ -45,6 +53,8 @@ const formSchema = z.object({
 export default function ConnectAbsenceForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user, session } = useAuthStore();
+  const [groupPopoverOpen, setGroupPopoverOpen] = useState(false);
+  const [groups, setGroups] = useState<Group[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,11 +64,31 @@ export default function ConnectAbsenceForm() {
     },
   });
 
+  useEffect(() => {
+    fetchGroups();
+  }, []);
+
+  const fetchGroups = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/connect-groups`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      );
+      setGroups(response.data);
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    }
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
 
     const formData = new FormData();
-    formData.append("group_id", user?.group?.id || "");
+    formData.append("group_id", values.group_id || "");
     formData.append("date", values.date.toISOString());
     if (values.notes) formData.append("notes", values.notes);
     if (values.file && values.file.length > 0) {
@@ -105,6 +135,64 @@ export default function ConnectAbsenceForm() {
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="group_id"
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-[240px]">
+                  <FormLabel htmlFor="group">Group</FormLabel>
+                  <Popover
+                    open={groupPopoverOpen}
+                    onOpenChange={setGroupPopoverOpen}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={groupPopoverOpen}
+                        className="col-span-3 justify-between"
+                      >
+                        {field.value
+                          ? groups.find((group) => group.id === field.value)
+                              ?.name
+                          : "Select Group..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search Group..." />
+                        <CommandList>
+                          <CommandEmpty>No Group found.</CommandEmpty>
+                          <CommandGroup>
+                            {groups.map((group) => (
+                              <CommandItem
+                                key={group.id}
+                                value={group.name}
+                                onSelect={() => {
+                                  field.onChange(group.id);
+                                  setGroupPopoverOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    field.value === group.id
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {group.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="date"

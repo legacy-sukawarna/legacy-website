@@ -35,12 +35,14 @@ export default function ConnectReportButton({
           responseType: "blob",
         }
       );
-      const blob = new Blob([response.data], { type: "text/csv" });
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = url;
-      a.download = "connect-absence-report.csv";
+      a.download = "connect-absence-report.xlsx";
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);

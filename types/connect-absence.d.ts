@@ -6,6 +6,8 @@ type Absence = {
   created_at: Date;
   updated_at: Date;
   group: {
+    name: string;
+    id: string;
     mentor: {
       name: string;
     };

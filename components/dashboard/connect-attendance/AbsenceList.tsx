@@ -123,6 +123,7 @@ export function AbsenceList() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Group</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Photo Url</TableHead>
                 <TableHead>Notes</TableHead>
@@ -131,11 +132,20 @@ export function AbsenceList() {
             <TableBody>
               {absences.records?.map((absence: Absence) => (
                 <TableRow key={absence.id}>
+                  <TableCell>{absence.group.name}</TableCell>
                   <TableCell>{format(absence.date, "PPP")}</TableCell>
                   <TableCell>
-                    <a href={absence.photo_url} target="_blank">
-                      {absence.photo_url || "-"}
-                    </a>
+                    {absence.photo_url ? (
+                      <a
+                        href={absence.photo_url}
+                        className="text-blue-500"
+                        target="_blank"
+                      >
+                        View Photo
+                      </a>
+                    ) : (
+                      "-"
+                    )}
                   </TableCell>
                   <TableCell>{absence.notes || "-"}</TableCell>
                 </TableRow>

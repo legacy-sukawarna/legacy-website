@@ -17,17 +17,15 @@ type User = {
   mentoredGroups: Group[];
 };
 
-type UserResponse = {
-  results: User[];
-  pagination: Pagination;
-};
-
 type Group = {
   id: string;
   name: string;
-  mentor: User;
+  mentor_id?: string;
+  mentor?: User;
   mentees: User[];
-  // Add other fields as necessary
+  created_at: Date;
+  updated_at: Date;
+  connect_attendance: ConnectAttendance[];
 };
 
 type EventAttendance = {
@@ -37,8 +35,10 @@ type EventAttendance = {
   // Add other fields as necessary
 };
 
-enum Roles {
-  ADMIN,
-  MENTOR,
-  MEMBER,
-}
+type ConnectAttendance = {
+  id: string;
+  groupId: string;
+  date: Date;
+  attendees: User[];
+  // Add other fields as necessary
+};
