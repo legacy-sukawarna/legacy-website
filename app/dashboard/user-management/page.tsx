@@ -14,7 +14,7 @@ import { redirect } from "next/navigation";
 const roles = ["ADMIN", "MENTOR", "MEMBER"];
 
 export default function UserManagementPage() {
-  const [users, setUsers] = useState<UserResponse>({
+  const [users, setUsers] = useState({
     results: [],
     pagination: {
       page: 1,
