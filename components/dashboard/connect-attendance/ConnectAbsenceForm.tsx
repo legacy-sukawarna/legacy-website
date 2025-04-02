@@ -81,6 +81,10 @@ export default function ConnectAbsenceForm() {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/connect-groups`,
         {
+          params: {
+            page: 1,
+            limit: 9999,
+          },
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
           },

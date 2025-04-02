@@ -6,7 +6,7 @@ import { Loader2, Download } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { redirect } from "next/navigation";
 import axios from "axios";
-
+import { format } from "date-fns";
 interface ConnectReportButtonProps {
   startDate?: string;
   endDate?: string;
@@ -48,7 +48,10 @@ export default function ConnectReportButton({
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = url;
-      a.download = "connect-absence-report.xlsx";
+      a.download = `connect-absence-report-${format(
+        startDate || "",
+        "yyyy-MM-dd"
+      )}-${format(endDate || "", "yyyy-MM-dd")}.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
