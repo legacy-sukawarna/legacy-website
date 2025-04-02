@@ -12,11 +12,10 @@ export async function GET(request: Request) {
   const origin = requestUrl.origin;
 
   if (code) {
-    const supabase = createClient();
-    const session: AuthTokenResponse =
-      await supabase.auth.exchangeCodeForSession(code);
-
     try {
+      const supabase = createClient();
+      const session: AuthTokenResponse =
+        await supabase.auth.exchangeCodeForSession(code);
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/callback`,
         {

@@ -1,8 +1,10 @@
+"use client";
+
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
-import { useState } from "react";
 import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -12,6 +14,7 @@ interface HeaderProps {
 export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
   const supabase = createClient();
   const { user, clearUser } = useAuthStore();
+  const router = useRouter();
 
   return (
     <header className="shadow-md py-4 px-6 flex justify-between items-center lg:hidden">
@@ -33,9 +36,13 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
           variant="outline"
           size="sm"
           className="ml-8 text-white"
-          onClick={() => {
-            supabase.auth.signOut();
+          onClick={async () => {
+            // First clear the user state
             clearUser();
+            // Then sign out
+            await supabase.auth.signOut();
+            // Finally redirect
+            router.push("/");
           }}
         >
           Log out
