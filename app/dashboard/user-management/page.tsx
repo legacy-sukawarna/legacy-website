@@ -39,7 +39,15 @@ export default function UserManagementPage() {
   const { session } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [groups, setGroups] = useState<any[]>([]);
+  const [groups, setGroups] = useState<GroupResponse>({
+    records: [],
+    pagination: {
+      page: 1,
+      limit: 10,
+      total: 0,
+      totalPages: 0,
+    },
+  });
   const { user } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
 
