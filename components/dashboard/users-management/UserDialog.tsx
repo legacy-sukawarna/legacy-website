@@ -41,7 +41,7 @@ interface UserDialogProps {
   }) => void;
   onSubmit: () => void;
   roles: string[];
-  groups: { id: string; name: string }[];
+  groups: GroupResponse;
   setEditingUser: (user: any) => void;
 }
 
@@ -141,7 +141,7 @@ export function UserDialog({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">None</SelectItem>
-                {groups.map((group) => (
+                {groups.records?.map((group) => (
                   <SelectItem key={group.id} value={group.id}>
                     {group.name}
                   </SelectItem>

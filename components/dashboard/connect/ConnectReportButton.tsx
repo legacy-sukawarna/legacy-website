@@ -18,6 +18,12 @@ export default function ConnectReportButton({
 }: ConnectReportButtonProps) {
   const { user, session } = useAuthStore();
 
+  const formatDate = (date: Date | string) => {
+    const d = new Date(date);
+    d.setHours(12, 0, 0, 0);
+    return d.toISOString().split("T")[0]; // Returns YYYY-MM-DD format
+  };
+
   const handleDownload = async () => {
     try {
       const response = await axios.get(
@@ -27,8 +33,8 @@ export default function ConnectReportButton({
             Authorization: `Bearer ${session?.access_token}`,
           },
           params: {
-            start_date: startDate,
-            end_date: endDate,
+            start_date: formatDate(startDate || ""),
+            end_date: formatDate(endDate || ""),
             group_id: user?.group_id,
             format: "sheet",
           },

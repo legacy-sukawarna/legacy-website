@@ -18,10 +18,3 @@ type AbsenceResponse = {
   records: Absence[];
   pagination: Pagination;
 };
-
-type Pagination = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-};

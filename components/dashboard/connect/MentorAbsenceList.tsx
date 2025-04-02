@@ -49,7 +49,15 @@ export function MentorAbsenceList() {
     from: startOfMonth(new Date()),
     to: new Date(),
   });
-  const [groups, setGroups] = useState<Array<{ id: string; name: string }>>([]);
+  const [groups, setGroups] = useState<GroupResponse>({
+    records: [],
+    pagination: {
+      page: 1,
+      limit: 10,
+      total: 0,
+      totalPages: 0,
+    },
+  });
   const [selectedGroupId, setSelectedGroupId] = useState<string>("all");
 
   if (!user || user.role !== "ADMIN") {
@@ -101,7 +109,7 @@ export function MentorAbsenceList() {
 
   useEffect(() => {
     fetchAbsences(currentPage);
-  }, [currentPage, dateRange, selectedGroupId]);
+  }, [currentPage, dateRange, selectedGroupId, currentPage]);
 
   return (
     <Card>
@@ -117,7 +125,7 @@ export function MentorAbsenceList() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Groups</SelectItem>
-                {groups?.map((group) => (
+                {groups.records.map((group) => (
                   <SelectItem key={group.id} value={group.id}>
                     {group.name}
                   </SelectItem>

@@ -54,7 +54,15 @@ export default function ConnectAbsenceForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user, session } = useAuthStore();
   const [groupPopoverOpen, setGroupPopoverOpen] = useState(false);
-  const [groups, setGroups] = useState<Group[]>([]);
+  const [groups, setGroups] = useState<GroupResponse>({
+    records: [],
+    pagination: {
+      page: 1,
+      limit: 10,
+      total: 0,
+      totalPages: 0,
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -153,8 +161,9 @@ export default function ConnectAbsenceForm() {
                         className="col-span-3 justify-between"
                       >
                         {field.value
-                          ? groups.find((group) => group.id === field.value)
-                              ?.name
+                          ? groups.records.find(
+                              (group) => group.id === field.value
+                            )?.name
                           : "Select Group..."}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -165,7 +174,7 @@ export default function ConnectAbsenceForm() {
                         <CommandList>
                           <CommandEmpty>No Group found.</CommandEmpty>
                           <CommandGroup>
-                            {groups.map((group) => (
+                            {groups.records.map((group) => (
                               <CommandItem
                                 key={group.id}
                                 value={group.name}

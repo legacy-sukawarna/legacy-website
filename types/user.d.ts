@@ -28,6 +28,11 @@ type Group = {
   connect_attendance: ConnectAttendance[];
 };
 
+type GroupResponse = {
+  records: Group[];
+  pagination: Pagination;
+};
+
 type EventAttendance = {
   id: string;
   eventId: string;

@@ -25,7 +25,15 @@ import { ConnectGroupDialog } from "./ConnectGroupDialog";
 import { toast } from "@/components/ui/use-toast";
 
 export function ConnectGroupManager() {
-  const [groups, setGroups] = useState<Group[]>([]);
+  const [groups, setGroups] = useState<GroupResponse>({
+    records: [],
+    pagination: {
+      page: 1,
+      limit: 10,
+      total: 0,
+      totalPages: 0,
+    },
+  });
   const [isOpen, setIsOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<any>(null);
   const [newGroup, setNewGroup] = useState({
@@ -36,6 +44,7 @@ export function ConnectGroupManager() {
   const [groupToDelete, setGroupToDelete] = useState<string | null>(null);
   const { session } = useAuthStore();
   const [mentors, setMentors] = useState<User[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleCreateOrUpdate = async () => {
     try {
@@ -137,6 +146,10 @@ export function ConnectGroupManager() {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/connect-groups`,
         {
+          params: {
+            page: currentPage,
+            limit: 5,
+          },
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
           },
@@ -166,8 +179,8 @@ export function ConnectGroupManager() {
 
   useEffect(() => {
     fetchGroups();
-    fetchMentors();
-  }, []);
+    // fetchMentors();
+  }, [currentPage]);
 
   return (
     <Card>
@@ -197,7 +210,7 @@ export function ConnectGroupManager() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {groups.map((group) => (
+            {groups.records.map((group) => (
               <TableRow key={group.id}>
                 <TableCell>{group.name}</TableCell>
                 {/* <TableCell>{group.mentor?.name || "-"}</TableCell>
@@ -222,6 +235,30 @@ export function ConnectGroupManager() {
             ))}
           </TableBody>
         </Table>
+
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Showing {groups.records.length} of {groups.pagination.total} results
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((p) => p + 1)}
+              disabled={currentPage >= groups.pagination.totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
       </CardContent>
       <ConfirmationDialog
         open={deleteConfirmOpen}
