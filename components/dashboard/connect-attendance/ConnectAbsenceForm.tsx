@@ -222,7 +222,16 @@ export default function ConnectAbsenceForm() {
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={field.onChange}
+                        onSelect={(date) => {
+                          if (date) {
+                            // Set the time to noon (12:00) of the selected date to avoid timezone issues
+                            const adjustedDate = new Date(date);
+                            adjustedDate.setHours(12, 0, 0, 0);
+                            field.onChange(adjustedDate);
+                          } else {
+                            field.onChange(date);
+                          }
+                        }}
                         disabled={(date) =>
                           date > new Date() || date < new Date("1900-01-01")
                         }
