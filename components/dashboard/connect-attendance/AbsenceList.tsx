@@ -63,6 +63,8 @@ export function AbsenceList() {
             start_date: date?.from?.toISOString(),
             end_date: date?.to?.toISOString(),
             group_id: user?.group_id,
+            sort_by: "created_at",
+            sort_order: "desc",
           },
         }
       );
@@ -79,7 +81,7 @@ export function AbsenceList() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Absence List</CardTitle>
+        <CardTitle>Absence History List</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -127,6 +129,7 @@ export function AbsenceList() {
                 <TableHead>Date</TableHead>
                 <TableHead>Photo Url</TableHead>
                 <TableHead>Notes</TableHead>
+                <TableHead>Created At</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -148,6 +151,9 @@ export function AbsenceList() {
                     )}
                   </TableCell>
                   <TableCell>{absence.notes || "-"}</TableCell>
+                  <TableCell>
+                    {format(absence.created_at, "PPP hh:mm a")}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

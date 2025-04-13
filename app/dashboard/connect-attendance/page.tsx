@@ -30,7 +30,7 @@ const ConnectAbsenceContent = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="form">Fill Absence Form</TabsTrigger>
-          <TabsTrigger value="list">View Absences</TabsTrigger>
+          <TabsTrigger value="list">View Absences History</TabsTrigger>
         </TabsList>
         <TabsContent value="form" className="mt-6">
           <ConnectAbsenceForm />

@@ -63,6 +63,7 @@ export default function ConnectAbsenceForm() {
       totalPages: 0,
     },
   });
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -212,7 +213,10 @@ export default function ConnectAbsenceForm() {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Date</FormLabel>
-                  <Popover>
+                  <Popover
+                    open={datePopoverOpen}
+                    onOpenChange={setDatePopoverOpen}
+                  >
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -241,6 +245,7 @@ export default function ConnectAbsenceForm() {
                             const adjustedDate = new Date(date);
                             adjustedDate.setHours(12, 0, 0, 0);
                             field.onChange(adjustedDate);
+                            setDatePopoverOpen(false);
                           } else {
                             field.onChange(date);
                           }
