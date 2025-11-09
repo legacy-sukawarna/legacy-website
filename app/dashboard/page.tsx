@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calendar, CheckCircle, UserCheck } from "lucide-react";
+import { BookOpen, Calendar, CheckCircle, UserCheck } from "lucide-react";
 
 export default function DashboardPage() {
   return (
@@ -11,18 +11,17 @@ export default function DashboardPage() {
         This is where you can view and manage your church activities.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="p-4 rounded-lg shadow">
+        <div className="p-4 rounded-lg shadow bg-card col-span-1">
           <h2 className="text-lg font-semibold mb-2">Quick Links</h2>
           <ul className="space-y-3">
             <li>
               <Link
-                href="/dashboard/"
+                href="https://drive.google.com/drive/folders/1R5tbR7AJeNzDixeHDZ7pEfhVTCFSt3ny?usp=sharing"
+                target="_blank"
                 className="flex items-center p-3 transition-colors rounded-md hover:bg-blue-50 group"
               >
-                <Calendar className="w-5 h-5 text-blue-500 mr-3" />
-                <span className=" group-hover:text-blue-600">
-                  View upcoming events
-                </span>
+                <BookOpen className="w-5 h-5 text-blue-500 mr-3" />
+                <span className=" group-hover:text-blue-600">Tutorials</span>
               </Link>
             </li>
             <li>
@@ -48,14 +47,6 @@ export default function DashboardPage() {
               </Link>
             </li>
           </ul>
-        </div>
-        <div className="p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">Recent Activities</h2>
-          <p>No recent activities to display.</p>
-        </div>
-        <div className="p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">Announcements</h2>
-          <p>Stay tuned for upcoming announcements.</p>
         </div>
       </div>
     </div>

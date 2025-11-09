@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -27,7 +27,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useAuthStore } from "@/store/authStore";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
 import {
@@ -38,6 +37,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { useGroups } from "@/hooks/useGroup";
+import { useCreateConnectAttendance } from "@/hooks/useConnectAttendance";
 
 const formSchema = z.object({
   group_id: z.string({
@@ -51,19 +52,14 @@ const formSchema = z.object({
 });
 
 export default function ConnectAbsenceForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, session } = useAuthStore();
   const [groupPopoverOpen, setGroupPopoverOpen] = useState(false);
-  const [groups, setGroups] = useState<GroupResponse>({
-    records: [],
-    pagination: {
-      page: 1,
-      limit: 10,
-      total: 0,
-      totalPages: 0,
-    },
-  });
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+
+  // Fetch groups using React Query hook
+  const { data: groups, isLoading: isLoadingGroups } = useGroups();
+
+  // Mutation for creating attendance
+  const createAttendanceMutation = useCreateConnectAttendance();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,33 +69,7 @@ export default function ConnectAbsenceForm() {
     },
   });
 
-  useEffect(() => {
-    fetchGroups();
-  }, []);
-
-  const fetchGroups = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/connect-groups`,
-        {
-          params: {
-            page: 1,
-            limit: 9999,
-          },
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-        }
-      );
-      setGroups(response.data);
-    } catch (error) {
-      console.error("Error fetching groups:", error);
-    }
-  };
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
-
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
     formData.append("group_id", values.group_id || "");
     formData.append("date", values.date.toISOString());
@@ -111,20 +81,12 @@ export default function ConnectAbsenceForm() {
     }
 
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/connect-attendance`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-        }
-      );
+      await createAttendanceMutation.mutateAsync(formData);
       toast({
         title: "Success",
         description: "Attendance submitted successfully",
       });
+      form.reset();
     } catch (error: any) {
       console.error("Error:", error);
       if (axios.isAxiosError(error)) {
@@ -137,11 +99,8 @@ export default function ConnectAbsenceForm() {
             "Failed to submit attendance",
         });
       }
-    } finally {
-      setIsSubmitting(false);
-      form.reset();
     }
-  }
+  };
 
   return (
     <Card>
@@ -164,8 +123,11 @@ export default function ConnectAbsenceForm() {
                         role="combobox"
                         aria-expanded={groupPopoverOpen}
                         className="col-span-3 justify-between"
+                        disabled={isLoadingGroups}
                       >
-                        {field.value
+                        {isLoadingGroups
+                          ? "Loading groups..."
+                          : field.value && groups?.records
                           ? groups.records.find(
                               (group) => group.id === field.value
                             )?.name
@@ -179,7 +141,7 @@ export default function ConnectAbsenceForm() {
                         <CommandList>
                           <CommandEmpty>No Group found.</CommandEmpty>
                           <CommandGroup>
-                            {groups.records.map((group) => (
+                            {groups?.records?.map((group) => (
                               <CommandItem
                                 key={group.id}
                                 value={group.name}
@@ -305,8 +267,8 @@ export default function ConnectAbsenceForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && (
+            <Button type="submit" disabled={createAttendanceMutation.isPending}>
+              {createAttendanceMutation.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
               Submit

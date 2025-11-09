@@ -15,6 +15,15 @@ type User = {
   group?: Group;
   EventAttendance: EventAttendance[];
   mentoredGroups: Group[];
+  is_committed?: boolean;
+  is_baptized?: boolean;
+  encounter?: boolean;
+  establish?: boolean;
+  equip?: boolean;
+  address?: string;
+  birth_date?: string;
+  google_id?: string;
+  kom_100?: boolean;
 };
 
 type Group = {

@@ -15,14 +15,16 @@ export const useAuth = () => {
       localStorage.getItem("session") || "{}"
     );
 
-    if (!user?.id) {
+    if (!user?.id || !session?.access_token) {
       router.push("/login");
       return;
     }
 
     try {
+      // Use /users/me endpoint which gets user from JWT token
+      // This works even for first-time login
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/${user.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
         {
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
@@ -32,7 +34,9 @@ export const useAuth = () => {
       setUser(response.data);
     } catch (error: any) {
       console.error("Error fetching user:", error);
-      if (error.response?.status === 403) {
+
+      // Only redirect to login on authentication errors
+      if (error.response?.status === 401 || error.response?.status === 403) {
         router.push("/login");
       }
       throw error;

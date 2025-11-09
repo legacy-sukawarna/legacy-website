@@ -47,6 +47,9 @@ export const signInWithGoogleOAuth = async () => {
   const { error, data } = await supabase.auth.signInWithOAuth({
     options: {
       redirectTo: `${origin}/auth/callback`,
+      queryParams: {
+        prompt: "select_account",
+      },
     },
     provider: "google",
   });
@@ -59,7 +62,7 @@ export const signInWithGoogleOAuth = async () => {
 
 export const handleResetPassword = async () => {
   const supabase = createClient();
-  const email = prompt("Für welche Email");
+  const email = prompt("For which email");
   if (!email) {
     console.error("No valid Email");
     return;

@@ -23,19 +23,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  phone?: string;
-  gender?: string;
-  group_id?: string;
-  group?: {
-    name: string;
-  };
-}
-
 interface UsersTableProps {
   users: User[];
   currentPage: number;
@@ -84,6 +71,46 @@ export function UsersTable({
       accessorKey: "group_id",
       header: "Group",
       cell: ({ row }) => row.original.group?.name || "-",
+    },
+    {
+      accessorKey: "birth_date",
+      header: "Birth Date",
+      cell: ({ row }) => row.original.birth_date || "-",
+    },
+    {
+      accessorKey: "address",
+      header: "Address",
+      cell: ({ row }) => row.original.address || "-",
+    },
+    {
+      accessorKey: "is_baptized",
+      header: "Baptized",
+      cell: ({ row }) => (row.original.is_baptized ? "Yes" : "No"),
+    },
+    {
+      accessorKey: "kom_100",
+      header: "KOM 100",
+      cell: ({ row }) => (row.original.kom_100 ? "Yes" : "No"),
+    },
+    {
+      accessorKey: "encounter",
+      header: "Encounter",
+      cell: ({ row }) => (row.original.encounter ? "Yes" : "No"),
+    },
+    {
+      accessorKey: "establish",
+      header: "Establish",
+      cell: ({ row }) => (row.original.establish ? "Yes" : "No"),
+    },
+    {
+      accessorKey: "equip",
+      header: "Equip",
+      cell: ({ row }) => (row.original.equip ? "Yes" : "No"),
+    },
+    {
+      accessorKey: "is_committed",
+      header: "Committed",
+      cell: ({ row }) => (row.original.is_committed ? "Yes" : "No"),
     },
     {
       id: "actions",

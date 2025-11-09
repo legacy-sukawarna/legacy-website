@@ -160,6 +160,53 @@ Key configurations involve setting up the `.env` file and customizing the `schem
 
 A basic usage example is described in the [Usage](#usage) section.
 
+## Development
+
+### Commit Guidelines
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) for standardized commit messages and automated changelog generation.
+
+**Quick Start:**
+
+```bash
+# Use the interactive commit tool (recommended)
+npm run commit
+
+# Or manually with format:
+git commit -m "feat: your feature description"
+```
+
+**Commit Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `refactor`: Code refactoring
+- `docs`: Documentation changes
+- `perf`: Performance improvements
+- `test`: Tests
+- `build`: Build system changes
+- `chore`: Other changes
+
+**Creating a Release:**
+
+```bash
+# Patch release (1.0.0 → 1.0.1)
+npm run release
+
+# Minor release (1.0.0 → 1.1.0)
+npm run release:minor
+
+# Major release (1.0.0 → 2.0.0)
+npm run release:major
+```
+
+This will automatically:
+- Bump the version in `package.json`
+- Generate/update `CHANGELOG.md`
+- Create a git tag
+- Commit the changes
+
+For detailed guidelines, see [COMMIT_GUIDE.md](./COMMIT_GUIDE.md).
+
 ## Troubleshooting
 
 For any issues encountered during setup or usage, refer to the official documentation of the technologies used.

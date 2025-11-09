@@ -30,6 +30,7 @@ interface UserDialogProps {
     phone: string;
     gender: string;
     group_id: string;
+    birth_date: string;
   };
   setNewUser: (user: {
     name: string;
@@ -38,10 +39,11 @@ interface UserDialogProps {
     phone: string;
     gender: string;
     group_id: string;
+    birth_date: string;
   }) => void;
   onSubmit: () => void;
   roles: string[];
-  groups: GroupResponse;
+  groups: GroupResponse | undefined;
   setEditingUser: (user: any) => void;
 }
 
@@ -141,7 +143,7 @@ export function UserDialog({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">None</SelectItem>
-                {groups.records?.map((group) => (
+                {groups?.records?.map((group) => (
                   <SelectItem key={group.id} value={group.id}>
                     {group.name}
                   </SelectItem>
@@ -168,6 +170,19 @@ export function UserDialog({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="birth_date" className="text-right">
+              Birth Date
+            </Label>
+            <Input
+              id="birth_date"
+              type="date"
+              value={newUser.birth_date}
+              onChange={(e) =>
+                setNewUser({ ...newUser, birth_date: e.target.value })
+              }
+            />
           </div>
         </div>
         <DialogFooter>

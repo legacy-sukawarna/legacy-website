@@ -5,24 +5,22 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { UserDialog } from "../../../components/dashboard/users-management/UserDialog";
-import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
 import { UsersTable } from "@/components/dashboard/users-management/UserTable";
 import { Card, CardTitle, CardContent, CardHeader } from "@/components/ui/card";
 import { redirect } from "next/navigation";
+import {
+  useUsers,
+  useCreateUser,
+  useUpdateUser,
+  useDeleteUser,
+} from "@/hooks/useUser";
+import { useGroups } from "@/hooks/useGroup";
+import { toast } from "@/components/ui/use-toast";
 
 const roles = ["ADMIN", "MENTOR", "MEMBER"];
 
 export default function UserManagementPage() {
-  const [users, setUsers] = useState({
-    results: [],
-    pagination: {
-      page: 1,
-      limit: 10,
-      total: 0,
-      totalPages: 0,
-    },
-  });
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
@@ -33,23 +31,28 @@ export default function UserManagementPage() {
     phone: "",
     gender: "",
     group_id: "",
+    birth_date: "",
   });
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
-  const { session } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [groups, setGroups] = useState<GroupResponse>({
-    records: [],
-    pagination: {
-      page: 1,
-      limit: 10,
-      total: 0,
-      totalPages: 0,
-    },
-  });
+
   const { user } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(true);
+
+  // Queries
+  const { data: usersData, isLoading: usersLoading } = useUsers({
+    page: currentPage,
+    limit: itemsPerPage,
+    search: searchTerm,
+  });
+
+  const { data: groupsData } = useGroups();
+
+  // Mutations
+  const createUserMutation = useCreateUser();
+  const updateUserMutation = useUpdateUser();
+  const deleteUserMutation = useDeleteUser();
 
   if (!user || user.role !== "ADMIN") {
     redirect("/dashboard");
@@ -59,32 +62,27 @@ export default function UserManagementPage() {
     try {
       if (editingUser) {
         // Update existing user
-        await axios.put(
-          `${process.env.NEXT_PUBLIC_API_URL}/users/${editingUser.id}`,
-          {
-            name: newUser.name,
-            email: newUser.email,
-            role: newUser.role,
-            phone: newUser.phone,
-            gender: newUser.gender,
-            group_id: newUser.group_id === "none" ? null : newUser.group_id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${session?.access_token}`,
-            },
-          }
-        );
+        await updateUserMutation.mutateAsync({
+          id: editingUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          role: newUser.role as Role | undefined,
+          phone: newUser.phone,
+          gender: newUser.gender as Gender | undefined,
+          group_id: newUser.group_id === "none" ? undefined : newUser.group_id,
+        });
       } else {
         // Create new user
-        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users`, newUser, {
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
+        await createUserMutation.mutateAsync({
+          name: newUser.name,
+          email: newUser.email,
+          role: newUser.role as Role | undefined,
+          phone: newUser.phone,
+          gender: newUser.gender as Gender | undefined,
+          group_id: newUser.group_id === "none" ? undefined : newUser.group_id,
         });
       }
-      // Refresh the users list
-      await fetchUsers();
+
       // Reset form and close dialog
       setIsOpen(false);
       setEditingUser(null);
@@ -95,17 +93,31 @@ export default function UserManagementPage() {
         phone: "",
         gender: "",
         group_id: "",
+        birth_date: "",
+      });
+
+      toast({
+        title: "Success",
+        description: "User created/updated successfully",
       });
     } catch (error) {
       console.error("Error creating/updating user:", error);
-      // You might want to add error handling/notification here
+      toast({
+        title: "Error",
+        description: "Error creating/updating user",
+      });
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (userToDelete !== null) {
-      setDeleteConfirmOpen(false);
-      setUserToDelete(null);
+      try {
+        await deleteUserMutation.mutateAsync(userToDelete);
+        setDeleteConfirmOpen(false);
+        setUserToDelete(null);
+      } catch (error) {
+        console.error("Error deleting user:", error);
+      }
     }
   };
 
@@ -120,64 +132,19 @@ export default function UserManagementPage() {
     setDeleteConfirmOpen(true);
   };
 
-  const fetchUsers = async (page = currentPage) => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/users`,
-        {
-          params: {
-            page,
-            limit: itemsPerPage,
-            search: searchTerm,
-          },
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-        }
-      );
-      const data = response.data;
-      setUsers(data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchGroups = async () => {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/connect-groups`,
-      {
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      }
-    );
-    const data = response.data;
-    setGroups(data);
-  };
-
   // Add pagination handler
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchUsers(page);
   };
 
   // Add useEffect to handle search
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      fetchUsers(1); // Reset to first page when searching
-      setCurrentPage(1);
+      setCurrentPage(1); // Reset to first page when searching
     }, 300); // Debounce search for 300ms
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
-
-  useEffect(() => {
-    fetchUsers();
-    fetchGroups();
-  }, []);
 
   return (
     <div className="p-6">
@@ -198,25 +165,16 @@ export default function UserManagementPage() {
                 className="pl-8"
               />
             </div>
-            {/* <Button
-              onClick={() => {
-                setEditingUser(null);
-                setNewUser({ name: "", email: "", role: "" });
-                setIsOpen(true);
-              }}
-            >
-              <UserPlus className="mr-2 h-4 w-4" /> Add User
-            </Button> */}
           </div>
           <UsersTable
-            users={users.results}
+            users={usersData?.results || []}
             currentPage={currentPage}
             itemsPerPage={itemsPerPage}
-            totalPages={users.pagination.totalPages}
+            totalPages={usersData?.pagination.totalPages || 0}
             onPageChange={handlePageChange}
             onEdit={openEditDialog}
             onDelete={openDeleteConfirm}
-            isLoading={isLoading}
+            isLoading={usersLoading}
           />
         </CardContent>
       </Card>
@@ -238,7 +196,7 @@ export default function UserManagementPage() {
         onSubmit={handleCreateOrUpdate}
         roles={roles}
         setEditingUser={setEditingUser}
-        groups={groups}
+        groups={groupsData}
       />
     </div>
   );

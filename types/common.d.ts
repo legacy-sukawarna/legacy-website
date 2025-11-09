@@ -4,3 +4,8 @@ type Pagination = {
   total: number;
   totalPages: number;
 };
+
+interface PaginatedResponse<T> {
+  results: T[];
+  pagination: Pagination;
+}
