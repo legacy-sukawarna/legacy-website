@@ -76,7 +76,7 @@ export const api = {
 
   // Group endpoints
   groups: {
-    getAll: () => api.get<GroupResponse>("/connect-groups"),
+    getAll: () => api.get<GroupResponse>("/connect-groups?limit=1000"),
 
     getById: (id: string) => api.get<Group>(`/connect-groups/${id}`),
 
