@@ -31,9 +31,9 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
   };
 
   const handleLogout = async () => {
-    clearUser();
     router.push("/");
     await supabase.auth.signOut();
+    clearUser();
   };
 
   return (
