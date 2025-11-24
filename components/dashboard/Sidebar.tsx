@@ -30,6 +30,12 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
     setOpen(false);
   };
 
+  const handleLogout = async () => {
+    clearUser();
+    router.push("/");
+    await supabase.auth.signOut();
+  };
+
   return (
     <aside
       className={`
@@ -127,12 +133,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
             <Button
               variant={"ghost"}
               className="flex justify-start p-2 rounded hover:bg-gray-700 w-full"
-              onClick={async () => {
-                clearUser();
-                await supabase.auth.signOut();
-                router.push("/");
-                setOpen(false);
-              }}
+              onClick={handleLogout}
             >
               <LogOut className="mr-2" />
               Logout
