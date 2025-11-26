@@ -427,8 +427,8 @@ export function MentorAbsenceList() {
 
           <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              Showing {absences.records.length} of {absences.pagination.total}{" "}
-              results
+              Showing page {absences.pagination.page} of{" "}
+              {absences.pagination.totalPages}
             </div>
             <div className="flex gap-2">
               <Button

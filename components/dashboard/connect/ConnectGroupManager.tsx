@@ -238,7 +238,8 @@ export function ConnectGroupManager() {
 
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            Showing {groups.records.length} of {groups.pagination.total} results
+            Showing page {groups.pagination.page} of{" "}
+            {groups.pagination.totalPages}
           </div>
           <div className="flex gap-2">
             <Button
