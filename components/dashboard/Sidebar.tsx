@@ -9,6 +9,7 @@ import {
   UserCog,
   Users,
   X,
+  LineChart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
@@ -65,22 +66,6 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
               Dashboard
             </Link>
           </li>
-          {user?.role === "ADMIN" && (
-            <li className="mb-2">
-              <Link
-                href="/dashboard/connect"
-                className={`flex items-center p-2 rounded hover:bg-gray-700 ${
-                  pathname === "/dashboard/connect"
-                    ? "bg-gray-700 font-medium"
-                    : ""
-                }`}
-                onClick={handleLinkClick}
-              >
-                <FileText className="mr-2" />
-                Connect
-              </Link>
-            </li>
-          )}
 
           {(user?.role === "ADMIN" || user?.role === "MENTOR") && (
             <li className="mb-2">
@@ -100,19 +85,52 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
           )}
 
           {user?.role === "ADMIN" && (
-            <li className="mb-2">
-              <Link
-                href="/dashboard/user-management"
-                className={`flex items-center p-2 rounded hover:bg-gray-700 ${
-                  pathname === "/dashboard/user-management"
-                    ? "bg-gray-700 font-medium"
-                    : ""
-                }`}
-              >
-                <UserCog className="mr-2" />
-                User Management
-              </Link>
-            </li>
+            <>
+              <li className="mb-2">
+                <Link
+                  href="/dashboard/connect"
+                  className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                    pathname === "/dashboard/connect"
+                      ? "bg-gray-700 font-medium"
+                      : ""
+                  }`}
+                  onClick={handleLinkClick}
+                >
+                  <FileText className="mr-2" />
+                  Connect
+                </Link>
+              </li>
+
+              <li className="mb-2">
+                <Link
+                  href="/dashboard/user-management"
+                  className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                    pathname === "/dashboard/user-management"
+                      ? "bg-gray-700 font-medium"
+                      : ""
+                  }`}
+                  onClick={handleLinkClick}
+                >
+                  <UserCog className="mr-2" />
+                  User Management
+                </Link>
+              </li>
+
+              <li className="mb-2">
+                <Link
+                  href="/dashboard/report"
+                  className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                    pathname === "/dashboard/report"
+                      ? "bg-gray-700 font-medium"
+                      : ""
+                  }`}
+                  onClick={handleLinkClick}
+                >
+                  <LineChart className="mr-2" />
+                  Report
+                </Link>
+              </li>
+            </>
           )}
 
           {/* <li className="mb-2">

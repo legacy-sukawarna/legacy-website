@@ -110,5 +110,8 @@ export const api = {
       }),
 
     delete: (id: string) => api.delete(`/connect-attendance/${id}`),
+
+    getReport: (params: { start_date: string; end_date: string }) =>
+      api.get<AttendanceReport>("/connect-attendance/report/data", { params }),
   },
 };

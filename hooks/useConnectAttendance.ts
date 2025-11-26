@@ -34,6 +34,29 @@ export const useConnectAttendance = (id: string) => {
 };
 
 /**
+ * Fetch attendance report for a date range
+ */
+export const useConnectAttendanceReport = (params: {
+  start_date: string;
+  end_date: string;
+}) => {
+  const { session } = useAuthStore();
+
+  return useQuery<AttendanceReport>({
+    queryKey: [
+      "connect-attendance",
+      "report",
+      params.start_date,
+      params.end_date,
+    ],
+    queryFn: () => api.connectAttendance.getReport(params),
+    enabled:
+      !!session?.access_token && !!params.start_date && !!params.end_date,
+    staleTime: 60000, // 1 minute
+  });
+};
+
+/**
  * Create new attendance record
  */
 export const useCreateConnectAttendance = () => {
@@ -45,6 +68,10 @@ export const useCreateConnectAttendance = () => {
       // Invalidate all attendance list queries
       queryClient.invalidateQueries({
         queryKey: ["connect-attendance", "list"],
+      });
+      // Invalidate report queries
+      queryClient.invalidateQueries({
+        queryKey: ["connect-attendance", "report"],
       });
     },
   });
@@ -67,6 +94,10 @@ export const useUpdateConnectAttendance = () => {
       // Invalidate all attendance lists
       queryClient.invalidateQueries({
         queryKey: ["connect-attendance", "list"],
+      });
+      // Invalidate report queries
+      queryClient.invalidateQueries({
+        queryKey: ["connect-attendance", "report"],
       });
     },
   });
