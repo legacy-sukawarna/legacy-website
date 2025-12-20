@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract release notes from CHANGELOG
+        id: extract-release-notes
+        run: |
+          # Extract the latest version's changelog entry
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "Extracting notes for version: $VERSION"
+
+          # Extract content between the current version header and the next version header
+          NOTES=$(awk "/^## \[?$VERSION\]?/,/^## \[?[0-9]+\.[0-9]+\.[0-9]+\]?/" CHANGELOG.md | sed '1d;$d')
+
+          # If extraction failed, use a default message
+          if [ -z "$NOTES" ]; then
+            NOTES="Release $VERSION"
+          fi
+
+          # Write to file for multi-line support
+          echo "$NOTES" > release_notes.md
+          cat release_notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release_notes.md
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
