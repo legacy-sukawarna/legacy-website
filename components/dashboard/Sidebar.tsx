@@ -32,53 +32,64 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
   };
 
   const handleLogout = async () => {
-    router.push("/");
-    await supabase.auth.signOut();
+    // First clear the user state
     clearUser();
+    // Then sign out from Supabase
+    await supabase.auth.signOut();
+    // Finally redirect
+    router.push("/");
   };
 
   return (
     <aside
       className={`
-        bg-gray-800 text-white w-64 min-h-screen p-4 fixed inset-y-0 left-0 z-30
+        bg-gradient-to-b from-slate-800 to-slate-900 text-slate-300 w-64 p-4 fixed top-[73px] bottom-0 left-0 z-30
         transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0
+        border-r border-slate-700/50
         ${open ? "translate-x-0" : "-translate-x-full"}
       `}
     >
       <div className="flex items-center justify-between mb-6 lg:hidden">
-        <h2 className="text-2xl font-semibold">Menu</h2>
-        <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
+        <h2 className="text-xl font-semibold text-white">Menu</h2>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-slate-400 hover:text-white hover:bg-slate-700/50"
+          onClick={() => setOpen(false)}
+        >
           <X className="h-6 w-6" />
           <span className="sr-only">Close sidebar</span>
         </Button>
       </div>
       <nav>
-        <ul>
-          <li className="mb-2">
+        <ul className="space-y-1">
+          <li>
             <Link
               href="/dashboard"
-              className={`flex items-center p-2 rounded hover:bg-gray-700 ${
-                pathname === "/dashboard" ? "bg-gray-700 font-medium" : ""
+              className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 ${
+                pathname === "/dashboard"
+                  ? "bg-orange-500/15 text-orange-400 border-l-2 border-orange-500"
+                  : "hover:bg-slate-700/50 hover:text-white"
               }`}
               onClick={handleLinkClick}
             >
-              <LayoutDashboard className="mr-2" />
+              <LayoutDashboard className="mr-3 h-5 w-5" />
               Dashboard
             </Link>
           </li>
 
           {(user?.role === "ADMIN" || user?.role === "MENTOR") && (
-            <li className="mb-2">
+            <li>
               <Link
                 href="/dashboard/connect-attendance"
-                className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 ${
                   pathname === "/dashboard/connect-attendance"
-                    ? "bg-gray-700 font-medium"
-                    : ""
+                    ? "bg-orange-500/15 text-orange-400 border-l-2 border-orange-500"
+                    : "hover:bg-slate-700/50 hover:text-white"
                 }`}
                 onClick={handleLinkClick}
               >
-                <Users className="mr-2" />
+                <Users className="mr-3 h-5 w-5" />
                 Connect Attendance
               </Link>
             </li>
@@ -86,74 +97,60 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
 
           {user?.role === "ADMIN" && (
             <>
-              <li className="mb-2">
+              <li>
                 <Link
                   href="/dashboard/connect"
-                  className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                  className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 ${
                     pathname === "/dashboard/connect"
-                      ? "bg-gray-700 font-medium"
-                      : ""
+                      ? "bg-orange-500/15 text-orange-400 border-l-2 border-orange-500"
+                      : "hover:bg-slate-700/50 hover:text-white"
                   }`}
                   onClick={handleLinkClick}
                 >
-                  <FileText className="mr-2" />
+                  <FileText className="mr-3 h-5 w-5" />
                   Connect
                 </Link>
               </li>
 
-              <li className="mb-2">
+              <li>
                 <Link
                   href="/dashboard/user-management"
-                  className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                  className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 ${
                     pathname === "/dashboard/user-management"
-                      ? "bg-gray-700 font-medium"
-                      : ""
+                      ? "bg-orange-500/15 text-orange-400 border-l-2 border-orange-500"
+                      : "hover:bg-slate-700/50 hover:text-white"
                   }`}
                   onClick={handleLinkClick}
                 >
-                  <UserCog className="mr-2" />
+                  <UserCog className="mr-3 h-5 w-5" />
                   User Management
                 </Link>
               </li>
 
-              <li className="mb-2">
+              <li>
                 <Link
                   href="/dashboard/report"
-                  className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                  className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 ${
                     pathname === "/dashboard/report"
-                      ? "bg-gray-700 font-medium"
-                      : ""
+                      ? "bg-orange-500/15 text-orange-400 border-l-2 border-orange-500"
+                      : "hover:bg-slate-700/50 hover:text-white"
                   }`}
                   onClick={handleLinkClick}
                 >
-                  <LineChart className="mr-2" />
+                  <LineChart className="mr-3 h-5 w-5" />
                   Report
                 </Link>
               </li>
             </>
           )}
 
-          {/* <li className="mb-2">
-            <Link
-              href="/dashboard/event-attendance"
-              className={`flex items-center p-2 rounded hover:bg-gray-700 ${
-                pathname === "/dashboard/event-attendance"
-                  ? "bg-gray-700 font-medium"
-                  : ""
-              }`}
-              onClick={handleLinkClick}
-            >
-              <Calendar className="mr-2" />
-              Event Attendance
-            </Link>
-          </li> */}
-          <li className="mb-2">
+          <li className="pt-4 mt-4 border-t border-slate-700/50">
             <Button
-              variant={"ghost"}
-              className="flex justify-start p-2 rounded hover:bg-gray-700 w-full"
+              variant="ghost"
+              className="flex justify-start px-3 py-2.5 rounded-lg w-full text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200"
               onClick={handleLogout}
             >
-              <LogOut className="mr-2" />
+              <LogOut className="mr-3 h-5 w-5" />
               Logout
             </Button>
           </li>

@@ -41,10 +41,10 @@ export default function DashboardLayout({
   }, []);
 
   return (
-    <div className="flex h-screen">
-      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+    <div className="flex flex-col h-screen">
+      <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
         <main className="flex-1 overflow-x-hidden overflow-y-auto mx-2">
           {children}
         </main>
