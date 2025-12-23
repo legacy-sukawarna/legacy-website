@@ -183,63 +183,67 @@ export function ConnectGroupManager() {
   }, [currentPage]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Connect Groups</CardTitle>
-        <CardDescription>Manage your connect groups here.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-4">
-          <Button
-            onClick={() => {
-              setEditingGroup(null);
-              setNewGroup({ name: "", mentor_id: "" });
-              setIsOpen(true);
-            }}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Create New Group
-          </Button>
+    <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden">
+      <div className="p-5 border-b border-slate-700/50 flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-white">Connect Groups</h2>
+          <p className="text-slate-400 text-sm mt-1">Manage your connect groups here</p>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              {/* <TableHead>Mentor</TableHead>
-              <TableHead>Total Mentees</TableHead> */}
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {groups.records.map((group) => (
-              <TableRow key={group.id}>
-                <TableCell>{group.name}</TableCell>
-                {/* <TableCell>{group.mentor?.name || "-"}</TableCell>
-                <TableCell>{group.mentees.length}</TableCell> */}
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openEditDialog(group)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openDeleteConfirm(group.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
+        <Button
+          onClick={() => {
+            setEditingGroup(null);
+            setNewGroup({ name: "", mentor_id: "" });
+            setIsOpen(true);
+          }}
+          className="bg-orange-500 hover:bg-orange-600 text-white"
+        >
+          <Plus className="mr-2 h-4 w-4" /> Create New Group
+        </Button>
+      </div>
+      <div className="p-5">
+        <div className="rounded-lg border border-slate-700/50 overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-slate-700/50 hover:bg-transparent">
+                <TableHead className="text-slate-300 bg-slate-700/30">Name</TableHead>
+                {/* <TableHead>Mentor</TableHead>
+                <TableHead>Total Mentees</TableHead> */}
+                <TableHead className="text-slate-300 bg-slate-700/30">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {groups.records.map((group) => (
+                <TableRow key={group.id} className="border-slate-700/50 hover:bg-slate-700/20">
+                  <TableCell className="text-slate-300">{group.name}</TableCell>
+                  {/* <TableCell>{group.mentor?.name || "-"}</TableCell>
+                  <TableCell>{group.mentees.length}</TableCell> */}
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => openEditDialog(group)}
+                      className="text-slate-400 hover:text-orange-400 hover:bg-orange-500/10"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => openDeleteConfirm(group.id)}
+                      className="text-slate-400 hover:text-red-400 hover:bg-red-500/10"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            Showing page {groups.pagination.page} of{" "}
-            {groups.pagination.totalPages}
+        <div className="flex items-center justify-between pt-4">
+          <div className="text-sm text-slate-400">
+            Page {groups.pagination.page} of {groups.pagination.totalPages}
           </div>
           <div className="flex gap-2">
             <Button
@@ -247,6 +251,7 @@ export function ConnectGroupManager() {
               size="sm"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
+              className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white disabled:opacity-50"
             >
               Previous
             </Button>
@@ -255,12 +260,13 @@ export function ConnectGroupManager() {
               size="sm"
               onClick={() => setCurrentPage((p) => p + 1)}
               disabled={currentPage >= groups.pagination.totalPages}
+              className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white disabled:opacity-50"
             >
               Next
             </Button>
           </div>
         </div>
-      </CardContent>
+      </div>
       <ConfirmationDialog
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
@@ -278,6 +284,6 @@ export function ConnectGroupManager() {
         setNewGroup={setNewGroup}
         onSubmit={handleCreateOrUpdate}
       />
-    </Card>
+    </div>
   );
 }

@@ -64,54 +64,64 @@ export function AbsenceList() {
   }, [currentPage, limit]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Absence History List</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden">
+      <div className="p-5 border-b border-slate-700/50">
+        <h2 className="text-lg font-semibold text-white">Attendance History</h2>
+        <p className="text-slate-400 text-sm mt-1">View your connect group attendance records</p>
+      </div>
+      <div className="p-5">
         <div className="space-y-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Group</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Photo Url</TableHead>
-                <TableHead>Notes</TableHead>
-                <TableHead>Created At</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {absences.records?.map((absence: Absence) => (
-                <TableRow key={absence.id}>
-                  <TableCell>{absence.group.name}</TableCell>
-                  <TableCell>{format(absence.date, "PPP")}</TableCell>
-                  <TableCell>
-                    {absence.photo_url ? (
-                      <a
-                        href={absence.photo_url}
-                        className="text-blue-500"
-                        target="_blank"
-                      >
-                        View Photo
-                      </a>
-                    ) : (
-                      "-"
-                    )}
-                  </TableCell>
-                  <TableCell>{absence.notes || "-"}</TableCell>
-                  <TableCell>
-                    {format(absence.created_at, "PPP hh:mm a")}
-                  </TableCell>
+          <div className="rounded-lg border border-slate-700/50 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-slate-700/50 hover:bg-transparent">
+                  <TableHead className="text-slate-300 bg-slate-700/30">Group</TableHead>
+                  <TableHead className="text-slate-300 bg-slate-700/30">Date</TableHead>
+                  <TableHead className="text-slate-300 bg-slate-700/30">Photo</TableHead>
+                  <TableHead className="text-slate-300 bg-slate-700/30">Notes</TableHead>
+                  <TableHead className="text-slate-300 bg-slate-700/30">Created At</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {absences.records?.length === 0 ? (
+                  <TableRow className="border-slate-700/50">
+                    <TableCell colSpan={5} className="h-24 text-center text-slate-400">
+                      No attendance records found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  absences.records?.map((absence: Absence) => (
+                    <TableRow key={absence.id} className="border-slate-700/50 hover:bg-slate-700/20">
+                      <TableCell className="text-slate-300">{absence.group.name}</TableCell>
+                      <TableCell className="text-slate-300">{format(absence.date, "PPP")}</TableCell>
+                      <TableCell>
+                        {absence.photo_url ? (
+                          <a
+                            href={absence.photo_url}
+                            className="text-orange-400 hover:text-orange-300 transition-colors"
+                            target="_blank"
+                          >
+                            View Photo
+                          </a>
+                        ) : (
+                          <span className="text-slate-500">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-slate-300">{absence.notes || <span className="text-slate-500">-</span>}</TableCell>
+                      <TableCell className="text-slate-400 text-sm">
+                        {format(absence.created_at, "PPP hh:mm a")}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
             <div className="flex items-center gap-4">
-              <div className="text-sm text-muted-foreground">
-                Showing {absences.records.length} of {absences.pagination.total}{" "}
-                results
+              <div className="text-sm text-slate-400">
+                Showing {absences.records.length} of {absences.pagination.total} results
               </div>
               <Select
                 value={limit.toString()}
@@ -120,10 +130,10 @@ export function AbsenceList() {
                   setCurrentPage(1);
                 }}
               >
-                <SelectTrigger className="w-[100px]">
+                <SelectTrigger className="w-[100px] bg-slate-700/50 border-slate-600 text-slate-200">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-800 border-slate-700">
                   <SelectItem value="10">10</SelectItem>
                   <SelectItem value="25">25</SelectItem>
                   <SelectItem value="50">50</SelectItem>
@@ -137,6 +147,7 @@ export function AbsenceList() {
                 size="sm"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
+                className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white disabled:opacity-50"
               >
                 Previous
               </Button>
@@ -145,13 +156,14 @@ export function AbsenceList() {
                 size="sm"
                 onClick={() => setCurrentPage((p) => p + 1)}
                 disabled={currentPage >= absences.pagination.totalPages}
+                className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white disabled:opacity-50"
               >
                 Next
               </Button>
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

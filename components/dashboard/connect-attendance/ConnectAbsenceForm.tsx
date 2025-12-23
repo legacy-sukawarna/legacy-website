@@ -103,16 +103,22 @@ export default function ConnectAbsenceForm() {
   };
 
   return (
-    <Card>
-      <CardContent className="pt-6">
+    <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden">
+      <div className="p-5 border-b border-slate-700/50">
+        <h2 className="text-lg font-semibold text-white">Submit Attendance</h2>
+        <p className="text-slate-400 text-sm mt-1">
+          Fill out the form to record your connect group attendance
+        </p>
+      </div>
+      <div className="p-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="group_id"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-[240px]">
-                  <FormLabel htmlFor="group">Group</FormLabel>
+                <FormItem className="flex flex-col w-[280px]">
+                  <FormLabel className="text-slate-300">Group</FormLabel>
                   <Popover
                     open={groupPopoverOpen}
                     onOpenChange={setGroupPopoverOpen}
@@ -122,7 +128,7 @@ export default function ConnectAbsenceForm() {
                         variant="outline"
                         role="combobox"
                         aria-expanded={groupPopoverOpen}
-                        className="col-span-3 justify-between"
+                        className="col-span-3 justify-between bg-slate-700/50 border-slate-600 text-slate-200 hover:bg-slate-700 hover:text-white"
                         disabled={isLoadingGroups}
                       >
                         {isLoadingGroups
@@ -135,11 +141,16 @@ export default function ConnectAbsenceForm() {
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
-                        <CommandInput placeholder="Search Group..." />
+                    <PopoverContent className="w-[280px] p-0 bg-slate-800 border-slate-700">
+                      <Command className="bg-slate-800">
+                        <CommandInput
+                          placeholder="Search Group..."
+                          className="text-slate-200"
+                        />
                         <CommandList>
-                          <CommandEmpty>No Group found.</CommandEmpty>
+                          <CommandEmpty className="text-slate-400 py-6 text-center text-sm">
+                            No Group found.
+                          </CommandEmpty>
                           <CommandGroup>
                             {groups?.records?.map((group) => (
                               <CommandItem
@@ -149,10 +160,11 @@ export default function ConnectAbsenceForm() {
                                   field.onChange(group.id);
                                   setGroupPopoverOpen(false);
                                 }}
+                                className="text-slate-300 hover:bg-slate-700 hover:text-white"
                               >
                                 <Check
                                   className={cn(
-                                    "mr-2 h-4 w-4",
+                                    "mr-2 h-4 w-4 text-orange-400",
                                     field.value === group.id
                                       ? "opacity-100"
                                       : "opacity-0"
@@ -174,7 +186,7 @@ export default function ConnectAbsenceForm() {
               name="date"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Date</FormLabel>
+                  <FormLabel className="text-slate-300">Date</FormLabel>
                   <Popover
                     open={datePopoverOpen}
                     onOpenChange={setDatePopoverOpen}
@@ -184,8 +196,8 @@ export default function ConnectAbsenceForm() {
                         <Button
                           variant={"outline"}
                           className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
+                            "w-[280px] pl-3 text-left font-normal bg-slate-700/50 border-slate-600 hover:bg-slate-700 hover:text-white",
+                            !field.value ? "text-slate-400" : "text-slate-200"
                           )}
                         >
                           {field.value ? (
@@ -193,11 +205,14 @@ export default function ConnectAbsenceForm() {
                           ) : (
                             <span>Pick a date</span>
                           )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          <CalendarIcon className="ml-auto h-4 w-4 text-orange-400" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent
+                      className="w-auto p-0 bg-slate-800 border-slate-700"
+                      align="start"
+                    >
                       <Calendar
                         mode="single"
                         selected={field.value}
@@ -219,7 +234,9 @@ export default function ConnectAbsenceForm() {
                       />
                     </PopoverContent>
                   </Popover>
-                  <FormDescription>The date of your absence.</FormDescription>
+                  <FormDescription className="text-slate-500">
+                    The date of your connect group meeting.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -229,17 +246,19 @@ export default function ConnectAbsenceForm() {
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes (Optional)</FormLabel>
+                  <FormLabel className="text-slate-300">
+                    Notes (Optional)
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Add any additional notes here..."
-                      className="resize-none"
+                      className="resize-none bg-slate-700/50 border-slate-600 text-slate-200 placeholder:text-slate-500 focus:border-orange-500/50 focus:ring-orange-500/20"
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    You can provide any additional information about your
-                    absence.
+                  <FormDescription className="text-slate-500">
+                    You can provide any additional information about the
+                    meeting.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -250,32 +269,39 @@ export default function ConnectAbsenceForm() {
               name="file"
               render={({ field: { value, onChange, ...field } }) => (
                 <FormItem>
-                  <FormLabel>Upload Photos (Optional)</FormLabel>
+                  <FormLabel className="text-slate-300">
+                    Upload Photos (Optional)
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="file"
                       accept="image/*"
                       multiple
                       onChange={(e) => onChange(e.target.files)}
+                      className="bg-slate-700/50 border-slate-600 text-slate-200 file:bg-slate-600 file:text-slate-200 file:border-0 file:mr-4 file:px-4 file:py-2 file:rounded-md hover:file:bg-slate-500"
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    You can upload photos related to your absence if needed.
+                  <FormDescription className="text-slate-500">
+                    You can upload photos from the connect group meeting.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={createAttendanceMutation.isPending}>
+            <Button
+              type="submit"
+              disabled={createAttendanceMutation.isPending}
+              className="bg-orange-500 hover:bg-orange-600 text-white"
+            >
               {createAttendanceMutation.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Submit
+              Submit Attendance
             </Button>
           </form>
         </Form>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

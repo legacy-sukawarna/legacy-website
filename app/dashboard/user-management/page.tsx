@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, UserCog } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { UserDialog } from "../../../components/dashboard/users-management/UserDialog";
 import { useAuthStore } from "@/store/authStore";
 import { UsersTable } from "@/components/dashboard/users-management/UserTable";
-import { Card, CardTitle, CardContent, CardHeader } from "@/components/ui/card";
 import { redirect } from "next/navigation";
 import {
   useUsers,
@@ -148,24 +147,32 @@ export default function UserManagementPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">User Management</h1>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+          <UserCog className="w-7 h-7 text-orange-400" />
+          User Management
+        </h1>
+        <p className="text-slate-400 mt-1">
+          Manage users, roles, and group assignments
+        </p>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Users</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-6 flex justify-between items-center">
+      <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden">
+        <div className="p-5 border-b border-slate-700/50">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-white">Users</h2>
             <div className="relative w-64">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8"
+                className="pl-9 bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-orange-500/50 focus:ring-orange-500/20"
               />
             </div>
           </div>
+        </div>
+        <div className="p-5">
           <UsersTable
             users={usersData?.results || []}
             currentPage={currentPage}
@@ -176,8 +183,8 @@ export default function UserManagementPage() {
             onDelete={openDeleteConfirm}
             isLoading={usersLoading}
           />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <ConfirmationDialog
         open={deleteConfirmOpen}
