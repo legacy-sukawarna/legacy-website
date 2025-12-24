@@ -9,7 +9,7 @@ import {
   FileText,
   ExternalLink,
   Database,
-  Sparkles,
+  CalendarDays,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
@@ -39,54 +39,57 @@ export default function DashboardPage() {
             Resources
           </h2>
 
-          {isAdmin ? (
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="https://drive.google.com/drive/folders/1R5tbR7AJeNzDixeHDZ7pEfhVTCFSt3ny?usp=sharing"
-                  target="_blank"
-                  className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-orange-500/10 hover:border-orange-500/30 border border-transparent transition-all duration-200 group"
-                >
+          <ul className="space-y-2">
+            {/* Service Scheduling - Available to all */}
+            <li>
+              <Link
+                href="https://ciss-user.carrd.co/"
+                target="_blank"
+                className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-orange-500/10 hover:border-orange-500/30 border border-transparent transition-all duration-200 group"
+              >
+                <div className="flex items-center">
+                  <CalendarDays className="w-5 h-5 text-slate-500 group-hover:text-orange-400 mr-3" />
                   <span className="text-slate-300 group-hover:text-orange-400">
-                    Tutorials & Guides
+                    Service Scheduling
                   </span>
-                  <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-orange-400" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="https://docs.google.com/spreadsheets/d/12JE9T6tMkiFdoD05z0gV2H0zlPcGi1qfLaTYGtgHfiY/edit?gid=666619809#gid=666619809"
-                  target="_blank"
-                  className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-orange-500/10 hover:border-orange-500/30 border border-transparent transition-all duration-200 group"
-                >
-                  <div className="flex items-center">
-                    <Database className="w-5 h-5 text-slate-500 group-hover:text-orange-400 mr-3" />
-                    <span className="text-slate-300 group-hover:text-orange-400">
-                      Legacy Data Center
-                    </span>
-                  </div>
-                  <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-orange-400" />
-                </Link>
-              </li>
-            </ul>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-6 text-center">
-              <div className="relative mb-4">
-                <div className="absolute inset-0 animate-ping">
-                  <Sparkles className="w-12 h-12 text-orange-400/30" />
                 </div>
-                <Sparkles className="w-12 h-12 text-orange-400 relative" />
-              </div>
-              <p className="text-white font-medium mb-1">
-                Something awesome is brewing! ☕
-              </p>
-              <p className="text-slate-400 text-sm">
-                We&apos;re cooking up cool resources just for you.
-                <br />
-                Stay tuned! 🚀
-              </p>
-            </div>
-          )}
+                <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-orange-400" />
+              </Link>
+            </li>
+
+            {/* Admin only resources */}
+            {isAdmin && (
+              <>
+                <li>
+                  <Link
+                    href="https://drive.google.com/drive/folders/1R5tbR7AJeNzDixeHDZ7pEfhVTCFSt3ny?usp=sharing"
+                    target="_blank"
+                    className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-orange-500/10 hover:border-orange-500/30 border border-transparent transition-all duration-200 group"
+                  >
+                    <span className="text-slate-300 group-hover:text-orange-400">
+                      Tutorials & Guides
+                    </span>
+                    <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-orange-400" />
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="https://docs.google.com/spreadsheets/d/12JE9T6tMkiFdoD05z0gV2H0zlPcGi1qfLaTYGtgHfiY/edit?gid=666619809#gid=666619809"
+                    target="_blank"
+                    className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-orange-500/10 hover:border-orange-500/30 border border-transparent transition-all duration-200 group"
+                  >
+                    <div className="flex items-center">
+                      <Database className="w-5 h-5 text-slate-500 group-hover:text-orange-400 mr-3" />
+                      <span className="text-slate-300 group-hover:text-orange-400">
+                        Legacy Data Center
+                      </span>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-orange-400" />
+                  </Link>
+                </li>
+              </>
+            )}
+          </ul>
         </div>
 
         {/* Connect Attendance - ADMIN & MENTOR only */}
