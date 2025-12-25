@@ -35,9 +35,9 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
           <Image
             src={LegacyLogo}
             alt="Legacy Logo"
-            width={100}
-            height={50}
-            className="h-8 w-auto transition-transform group-hover:scale-105"
+            width={80}
+            height={40}
+            className="h-6 w-auto transition-transform group-hover:scale-105 rounded-lg"
           />
         </Link>
       </div>
