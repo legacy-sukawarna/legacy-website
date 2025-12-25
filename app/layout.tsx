@@ -11,8 +11,19 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Legacy Community",
+  title: "Legacy Saturday Service",
   description: "Youth Church Community",
+  openGraph: {
+    title: "Legacy Saturday Service",
+    description: "Youth Church Community",
+    images: ["/assets/legacy-logo-white.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Legacy Saturday Service",
+    description: "Youth Church Community",
+    images: ["/assets/legacy-logo-white.png"],
+  },
 };
 
 export default function RootLayout({
