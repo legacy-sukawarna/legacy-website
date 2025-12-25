@@ -3,17 +3,25 @@ import Link from "next/link";
 import LegacyLogo from "../public/assets/legacy-logo-white.png";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { createClient } from "@/utils/supabase/client";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
 
 export default function Header() {
-  const supabase = createClient();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { href: "/#location", label: "Location" },
+    { href: "/sermons", label: "Sermons" },
+    { href: "/yearly-verse", label: "Yearly Verse" },
+  ];
 
   return (
-    <header className="shadow-sm w-full">
+    <header className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800/50 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4 md:justify-start md:space-x-10">
-          <div className="flex justify-start lg:w-0 lg:flex-1">
-            <Link href="/" className="text-2xl font-bold text-blue-600">
+        <div className="flex justify-between items-center py-4">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link href="/" className="flex items-center">
               <Image
                 src={LegacyLogo}
                 alt="Legacy Logo"
@@ -23,40 +31,72 @@ export default function Header() {
               />
             </Link>
           </div>
-          <nav className="hidden md:flex space-x-10">
-            <Link
-              href="#about"
-              className="text-base font-medium hover:text-gray-500"
-            >
-              About
-            </Link>
-            <Link
-              href="#services"
-              className="text-base font-medium hover:text-gray-500"
-            >
-              Services
-            </Link>
-            <Link
-              href="#events"
-              className="text-base font-medium hover:text-gray-500"
-            >
-              Events
-            </Link>
-            <Link
-              href="/yearly-verse"
-              className="text-base font-medium hover:text-gray-500"
-            >
-              Yearly Verse
-            </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-slate-300 hover:text-orange-400 transition-colors font-medium"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
-          <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
+
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center">
             <Link href="/login">
-              <Button variant="outline" className="ml-8">
+              <Button
+                variant="outline"
+                className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500"
+              >
                 Log in
               </Button>
             </Link>
           </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              className="text-slate-300 hover:text-white p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 border-t border-slate-800">
+            <nav className="flex flex-col space-y-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-slate-300 hover:text-orange-400 transition-colors font-medium py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button
+                  variant="outline"
+                  className="w-full border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500"
+                >
+                  Log in
+                </Button>
+              </Link>
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );

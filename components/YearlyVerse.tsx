@@ -18,10 +18,12 @@ export async function YearlyVerse({
   }
 
   return (
-    <div className="space-y-4">
-      <p className="text-lg font-medium">{name},</p>
-      <p className="text-lg font-medium">{verse.text}</p>
-      <p className="text-sm text-gray-500">{verse.reference}</p>
+    <div className="space-y-4 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50">
+      <p className="text-orange-400 font-medium">Dear {name},</p>
+      <p className="text-xl text-white leading-relaxed italic">
+        &ldquo;{verse.text}&rdquo;
+      </p>
+      <p className="text-sm text-slate-400 font-medium">— {verse.reference}</p>
     </div>
   );
 }
