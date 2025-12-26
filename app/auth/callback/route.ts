@@ -16,14 +16,24 @@ export async function GET(request: Request) {
       const supabase = createClient();
       const session: AuthTokenResponse =
         await supabase.auth.exchangeCodeForSession(code);
-      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/callback`, {
-        params: {
-          access_token: session?.data.session?.access_token,
-          refresh_token: session?.data.session?.refresh_token,
-          expires_in: session?.data.session?.expires_in,
-          token_type: session?.data.session?.token_type,
-        },
-      });
+      // Call backend auth callback to create/update user
+      try {
+        await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/callback`, {
+          params: {
+            access_token: session?.data.session?.access_token,
+            refresh_token: session?.data.session?.refresh_token,
+            expires_in: session?.data.session?.expires_in,
+            token_type: session?.data.session?.token_type,
+          },
+        });
+      } catch (error: any) {
+        // Log error but don't block the auth flow
+        // The user can still proceed even if backend callback fails
+        console.error(
+          "Backend auth callback error:",
+          error?.response?.data || error?.message
+        );
+      }
 
       // URL to redirect to after sign up process completes
       return NextResponse.redirect(`${origin}/dashboard`);

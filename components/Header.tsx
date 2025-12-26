@@ -12,6 +12,7 @@ export default function Header() {
   const navLinks = [
     { href: "/#location", label: "Location" },
     { href: "/sermons", label: "Sermons" },
+    { href: "/blog", label: "Blog" },
     { href: "/yearly-verse", label: "Yearly Verse" },
   ];
 

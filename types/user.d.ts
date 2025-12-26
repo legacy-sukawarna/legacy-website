@@ -1,4 +1,4 @@
-type Role = "MEMBER" | "ADMIN" | "MENTOR"; // Define possible roles
+type Role = "MEMBER" | "ADMIN" | "MENTOR" | "WRITER"; // Define possible roles
 type Gender = "MALE" | "FEMALE"; // Define possible genders
 
 type User = {

@@ -49,6 +49,12 @@ export default function Footer() {
                 Sermons
               </Link>
               <Link
+                href="/blog"
+                className="block text-slate-400 hover:text-orange-400 transition-colors text-sm"
+              >
+                Blog
+              </Link>
+              <Link
                 href="/yearly-verse"
                 className="block text-slate-400 hover:text-orange-400 transition-colors text-sm"
               >

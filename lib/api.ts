@@ -59,8 +59,22 @@ export const api = {
     return response.data;
   },
 
+  async patch<T>(
+    endpoint: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    const response = await axios.patch(`${API_URL}${endpoint}`, data, {
+      ...config,
+      headers: { ...getAuthHeaders(), ...config?.headers },
+    });
+    return response.data;
+  },
+
   // User endpoints
   users: {
+    getMe: () => api.get<User>("/users/me"),
+
     getAll: (params: { page: number; limit: number; search?: string }) =>
       api.get<PaginatedResponse<User>>("/users", { params }),
 
@@ -113,5 +127,55 @@ export const api = {
 
     getReport: (params: { start_date: string; end_date: string }) =>
       api.get<AttendanceReport>("/connect-attendance/report/data", { params }),
+  },
+
+  // Package endpoints (blog)
+  packages: {
+    getAll: () => api.get<Package[]>("/packages"),
+
+    getById: (id: string) => api.get<Package>(`/packages/${id}`),
+
+    getBySlug: (slug: string) => api.get<Package>(`/packages/slug/${slug}`),
+
+    create: (data: CreatePackageData) => api.post<Package>("/packages", data),
+
+    update: (id: string, data: UpdatePackageData) =>
+      api.put<Package>(`/packages/${id}`, data),
+
+    delete: (id: string) => api.delete(`/packages/${id}`),
+  },
+
+  // Post endpoints (blog)
+  posts: {
+    // Public endpoints
+    getAll: (params?: PostQueryParams) =>
+      api.get<PaginatedResponse<Post>>("/posts", { params }),
+
+    getBySlug: (slug: string) => api.get<Post>(`/posts/slug/${slug}`),
+
+    // Admin/Writer endpoints
+    getAllAdmin: (params?: PostQueryParams) =>
+      api.get<PaginatedResponse<Post>>("/posts/admin", { params }),
+
+    getById: (id: string) => api.get<Post>(`/posts/${id}`),
+
+    create: (data: CreatePostData) => api.post<Post>("/posts", data),
+
+    update: (id: string, data: UpdatePostData) =>
+      api.put<Post>(`/posts/${id}`, data),
+
+    delete: (id: string) => api.delete(`/posts/${id}`),
+
+    publish: (id: string) => api.patch<Post>(`/posts/${id}/publish`),
+
+    unpublish: (id: string) => api.patch<Post>(`/posts/${id}/unpublish`),
+
+    uploadImage: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      return api.post<{ url: string }>("/posts/upload-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    },
   },
 };

@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { createClient } from "@/utils/supabase/client";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { User, Session } from "@supabase/supabase-js";
 
 export const useAuth = () => {
@@ -23,15 +23,9 @@ export const useAuth = () => {
     try {
       // Use /users/me endpoint which gets user from JWT token
       // This works even for first-time login
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
-        {
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-        }
-      );
-      setUser(response.data);
+      // The api.users.getMe will automatically add auth headers from the store
+      const user = await api.users.getMe();
+      setUser(user);
     } catch (error: any) {
       console.error("Error fetching user:", error);
 
