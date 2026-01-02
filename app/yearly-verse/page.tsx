@@ -32,14 +32,15 @@ export default function YearlyVersePage() {
       <Header />
 
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-20">
-
         {isGenerating ? (
           <Card className="max-w-2xl w-full mx-auto bg-slate-900/80 border-slate-800 backdrop-blur-sm">
             <CardHeader className="text-center">
               <div className="mx-auto w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-4">
                 <BookOpen className="w-8 h-8 text-orange-400" />
               </div>
-              <CardTitle className="text-2xl text-white">Your Verse for 2025</CardTitle>
+              <CardTitle className="text-2xl text-white">
+                Your Verse for {new Date().getFullYear()}
+              </CardTitle>
               <CardDescription className="text-slate-400">
                 A special word from God just for you, {name}
               </CardDescription>
@@ -49,7 +50,7 @@ export default function YearlyVersePage() {
                 <YearlyVerse verseKey={verseKey} name={name} />
               </Suspense>
               <div className="mt-8 flex justify-center">
-                <Button 
+                <Button
                   onClick={regenerateVerse}
                   variant="outline"
                   className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10"
@@ -69,9 +70,10 @@ export default function YearlyVersePage() {
               Yearly Bible Verse
             </h1>
             <p className="text-slate-400 mb-8">
-              Enter your name and receive a personalized verse to guide you through 2025
+              Enter your name and receive a personalized verse to guide you
+              through the year
             </p>
-            
+
             <div className="space-y-4">
               <Input
                 placeholder="Enter your name"
@@ -79,7 +81,7 @@ export default function YearlyVersePage() {
                 className="w-full bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-orange-500 h-12 text-center text-lg"
                 onChange={(e) => setName(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && name.trim()) {
+                  if (e.key === "Enter" && name.trim()) {
                     setIsGenerating(true);
                   }
                 }}
@@ -94,7 +96,7 @@ export default function YearlyVersePage() {
               </Button>
             </div>
 
-            <Link 
+            <Link
               href="/"
               className="inline-block mt-8 text-slate-500 hover:text-slate-300 transition-colors text-sm"
             >
