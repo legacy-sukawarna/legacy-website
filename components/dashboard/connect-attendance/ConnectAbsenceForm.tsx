@@ -152,7 +152,10 @@ export default function ConnectAbsenceForm() {
                             No Group found.
                           </CommandEmpty>
                           <CommandGroup>
-                            {groups?.records?.map((group) => (
+                            {groups?.records
+                              ?.slice()
+                              .sort((a, b) => a.name.localeCompare(b.name))
+                              .map((group) => (
                               <CommandItem
                                 key={group.id}
                                 value={group.name}
