@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { v4 } from "uuid";
 import { useDropzone } from "react-dropzone";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import Loading from "./Loading";
 
 type Props = {

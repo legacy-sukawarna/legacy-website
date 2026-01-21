@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { setupAxiosInterceptors } from "@/utils/api-interceptor";
+import { setupAxiosInterceptors } from "@/lib/api-interceptor";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Header from "@/components/dashboard/Header";
 import { useAuthStore } from "@/store/authStore";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 

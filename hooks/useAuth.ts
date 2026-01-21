@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { api } from "@/lib/api";
 import { User, Session } from "@supabase/supabase-js";
 

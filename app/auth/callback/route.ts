@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { AuthTokenResponse } from "@supabase/supabase-js";
 import axios from "axios";
 import { NextResponse } from "next/server";

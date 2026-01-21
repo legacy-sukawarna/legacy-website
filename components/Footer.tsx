@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { siteConfig } from "@/lib/landing-page.config";
+import { siteConfig } from "@/config/site";
 import { MapPin, Clock, Instagram, Youtube } from "lucide-react";
 
 export default function Footer() {

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Header from "@/components/Header";
+import HeroCTA from "@/components/HeroCTA";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import { createClient } from "@/utils/supabase/server";
-import { siteConfig } from "@/lib/landing-page.config";
+import { siteConfig } from "@/config/site";
 import {
   MapPin,
   Clock,
@@ -13,20 +13,12 @@ import {
   Instagram,
   ChevronDown,
   ExternalLink,
-  LayoutDashboard,
 } from "lucide-react";
 
-export default async function Index() {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isAuthenticated = !!user;
-
+export default function Index() {
   return (
     <div className="w-full flex flex-col min-h-screen bg-slate-950">
-      <Header isAuthenticated={isAuthenticated} />
+      <Header />
 
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pb-24">
@@ -64,36 +56,7 @@ export default async function Index() {
             </span>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {isAuthenticated ? (
-              <Link href="/dashboard">
-                <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 transition-all hover:scale-105">
-                  <LayoutDashboard className="w-5 h-5 mr-2" />
-                  Go to Dashboard
-                </Button>
-              </Link>
-            ) : (
-              <Link href="/login">
-                <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 transition-all hover:scale-105">
-                  Join Us
-                </Button>
-              </Link>
-            )}
-            <a
-              href={siteConfig.service.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-lg px-8 py-6 border-white/30 text-white hover:bg-white/10 transition-all hover:scale-105"
-              >
-                <MapPin className="w-5 h-5 mr-2" />
-                Get Directions
-              </Button>
-            </a>
-          </div>
+          <HeroCTA mapsUrl={siteConfig.service.mapsUrl} />
         </div>
 
         {/* Scroll Indicator */}

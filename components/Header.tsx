@@ -5,13 +5,11 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { useState } from "react";
 import { Menu, X, LayoutDashboard } from "lucide-react";
+import { usePublicAuth } from "@/providers/public-auth-provider";
 
-interface HeaderProps {
-  isAuthenticated?: boolean;
-}
-
-export default function Header({ isAuthenticated = false }: HeaderProps) {
+export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated } = usePublicAuth();
 
   const navLinks = [
     { href: "/#location", label: "Location" },

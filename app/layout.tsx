@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Analytics } from "@vercel/analytics/next";
 import { QueryProvider } from "@/providers/query-provider";
+import { PublicAuthProvider } from "@/providers/public-auth-provider";
+import { createClient } from "@/lib/supabase/server";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -26,11 +28,18 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const isAuthenticated = !!user;
+
   return (
     <html lang="en">
       <body>
@@ -41,7 +50,9 @@ export default function RootLayout({
             forcedTheme="dark"
             disableTransitionOnChange
           >
-            <main className="flex flex-col h-screen">{children}</main>
+            <PublicAuthProvider isAuthenticated={isAuthenticated}>
+              <main className="flex flex-col h-screen">{children}</main>
+            </PublicAuthProvider>
             <Toaster />
             <Analytics />
           </ThemeProvider>

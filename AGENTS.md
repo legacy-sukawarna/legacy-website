@@ -557,6 +557,63 @@ API responses use consistent pagination:
 
 ---
 
+## AI Assistant Tools (MCP Servers)
+
+When working on this codebase, AI assistants should leverage available MCP (Model Context Protocol) servers to access up-to-date documentation and improve code quality.
+
+### Context7 - Library Documentation
+
+**Always use Context7** to fetch the latest documentation for libraries used in this project. This ensures you're working with current APIs and best practices, not outdated training data.
+
+**When to use Context7:**
+
+- Before implementing features with Next.js, React, or any major library
+- When unsure about API signatures or configuration options
+- When the user asks about specific library features
+- When debugging issues that might be related to version changes
+
+**Key libraries to look up:**
+
+| Library | Context7 ID | Use Case |
+|---------|-------------|----------|
+| Next.js | `/vercel/next.js` | App Router, Server Components, API routes |
+| React Query | `/tanstack/query` | Data fetching, caching, mutations |
+| Prisma | `/prisma/prisma` | Database queries, schema, migrations |
+| Supabase | `/supabase/supabase` | Auth, database, realtime |
+| Tailwind CSS | `/tailwindlabs/tailwindcss` | Styling, utilities, configuration |
+| Zod | `/colinhacks/zod` | Schema validation |
+| React Hook Form | `/react-hook-form/react-hook-form` | Form handling |
+| NestJS | `/nestjs/nest` | Backend modules, decorators, guards |
+
+**How to use:**
+
+1. First, resolve the library ID: `resolve-library-id` with the library name
+2. Then fetch docs: `get-library-docs` with the resolved ID and optional topic
+
+**Example workflow:**
+
+```
+// When implementing a new Server Component feature:
+1. Call resolve-library-id("next.js")
+2. Call get-library-docs("/vercel/next.js", topic: "server components")
+3. Implement the feature with current best practices
+```
+
+### Other Useful MCP Tools
+
+- **Web Search**: For finding solutions to specific errors or recent changes
+- **Browser Tools**: For testing frontend changes visually
+- **Fetch**: For accessing external documentation or API references
+
+### Best Practices
+
+1. **Check docs first** - Before writing code for unfamiliar APIs, fetch the latest documentation
+2. **Verify patterns** - Training data may be outdated; confirm current best practices via Context7
+3. **Look up breaking changes** - When upgrading dependencies, check for migration guides
+4. **Use topic filtering** - Request specific topics (e.g., "routing", "hooks") to get focused results
+
+---
+
 ## Quick Reference
 
 ### File Path Aliases

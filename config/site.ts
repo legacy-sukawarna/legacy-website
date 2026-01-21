@@ -1,4 +1,4 @@
-// Landing page configuration
+// Site configuration
 // Update these values as needed
 
 export const siteConfig = {

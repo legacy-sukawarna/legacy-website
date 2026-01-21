@@ -2,7 +2,7 @@
 
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
