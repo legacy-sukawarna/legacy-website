@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import { checkAuth } from "@/lib/auth";
+import { createClient } from "@/utils/supabase/server";
 import { siteConfig } from "@/lib/landing-page.config";
 import {
   MapPin,
@@ -13,14 +13,20 @@ import {
   Instagram,
   ChevronDown,
   ExternalLink,
+  LayoutDashboard,
 } from "lucide-react";
 
 export default async function Index() {
-  await checkAuth("dashboard"); // Will redirect to dashboard if authenticated
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const isAuthenticated = !!user;
 
   return (
     <div className="w-full flex flex-col min-h-screen bg-slate-950">
-      <Header />
+      <Header isAuthenticated={isAuthenticated} />
 
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pb-24">
@@ -59,11 +65,20 @@ export default async function Index() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/login">
-              <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 transition-all hover:scale-105">
-                Join Us
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link href="/dashboard">
+                <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 transition-all hover:scale-105">
+                  <LayoutDashboard className="w-5 h-5 mr-2" />
+                  Go to Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <Button size="lg" className="text-lg px-8 py-6 bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 transition-all hover:scale-105">
+                  Join Us
+                </Button>
+              </Link>
+            )}
             <a
               href={siteConfig.service.mapsUrl}
               target="_blank"

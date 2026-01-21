@@ -31,7 +31,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
           <Menu className="h-6 w-6" />
           <span className="sr-only">Toggle sidebar</span>
         </Button>
-        <Link href="/dashboard" className="flex items-center group">
+        <Link href="/" className="flex items-center group">
           <Image
             src={LegacyLogo}
             alt="Legacy Logo"

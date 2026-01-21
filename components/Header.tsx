@@ -4,9 +4,13 @@ import LegacyLogo from "../public/assets/legacy-logo-white.png";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 
-export default function Header() {
+interface HeaderProps {
+  isAuthenticated?: boolean;
+}
+
+export default function Header({ isAuthenticated = false }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -48,14 +52,23 @@ export default function Header() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center">
-            <Link href="/login">
-              <Button
-                variant="outline"
-                className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500"
-              >
-                Log in
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link href="/dashboard">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+                  <LayoutDashboard className="w-4 h-4 mr-2" />
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <Button
+                  variant="outline"
+                  className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500"
+                >
+                  Log in
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -87,14 +100,23 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
-              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button
-                  variant="outline"
-                  className="w-full border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500"
-                >
-                  Log in
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button
+                    variant="outline"
+                    className="w-full border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500"
+                  >
+                    Log in
+                  </Button>
+                </Link>
+              )}
             </nav>
           </div>
         )}
