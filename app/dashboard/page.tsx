@@ -10,6 +10,7 @@ import {
   ExternalLink,
   Database,
   CalendarDays,
+  GraduationCap,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
@@ -66,22 +67,25 @@ export default function DashboardPage() {
                     target="_blank"
                     className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-orange-500/10 hover:border-orange-500/30 border border-transparent transition-all duration-200 group"
                   >
-                    <span className="text-slate-300 group-hover:text-orange-400">
-                      Tutorials & Guides
-                    </span>
+                    <div className="flex items-center">
+                      <GraduationCap className="w-5 h-5 text-slate-500 group-hover:text-orange-400 mr-3" />
+                      <span className="text-slate-300 group-hover:text-orange-400">
+                        Tutorials & Guides
+                      </span>
+                    </div>
                     <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-orange-400" />
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="https://docs.google.com/spreadsheets/d/12JE9T6tMkiFdoD05z0gV2H0zlPcGi1qfLaTYGtgHfiY/edit?gid=666619809#gid=666619809"
+                    href="https://drive.google.com/drive/folders/1aJqGejZ_nmAJvtkZRN835NJt2NAhj7ng"
                     target="_blank"
                     className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-orange-500/10 hover:border-orange-500/30 border border-transparent transition-all duration-200 group"
                   >
                     <div className="flex items-center">
                       <Database className="w-5 h-5 text-slate-500 group-hover:text-orange-400 mr-3" />
                       <span className="text-slate-300 group-hover:text-orange-400">
-                        Legacy Data Center
+                        Legacy Database Drive
                       </span>
                     </div>
                     <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-orange-400" />
