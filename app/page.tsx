@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
 import { siteConfig } from "@/config/site";
+import { getChannelVideos } from "@/lib/youtube";
 import {
   MapPin,
   Clock,
@@ -15,7 +16,18 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-export default function Index() {
+export default async function Index() {
+  // Fetch latest videos from YouTube API
+  const youtubeVideos = await getChannelVideos(3);
+
+  // Use YouTube data if available, otherwise fall back to config
+  const featuredVideos =
+    youtubeVideos.length > 0
+      ? youtubeVideos.map((video) => ({
+          id: video.id,
+          title: video.title,
+        }))
+      : siteConfig.youtube.featuredVideos;
   return (
     <div className="w-full flex flex-col min-h-screen bg-slate-950">
       <Header />
@@ -149,8 +161,8 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {siteConfig.youtube.featuredVideos.map((video, index) => (
-              <Card key={index} className="bg-slate-800/50 border-slate-700/50 overflow-hidden hover:border-red-500/50 transition-all duration-300 hover:-translate-y-1 group">
+            {featuredVideos.map((video, index) => (
+              <Card key={video.id || index} className="bg-slate-800/50 border-slate-700/50 overflow-hidden hover:border-red-500/50 transition-all duration-300 hover:-translate-y-1 group">
                 <div className="aspect-video">
                   <iframe
                     src={`https://www.youtube.com/embed/${video.id}`}
@@ -161,7 +173,7 @@ export default function Index() {
                   />
                 </div>
                 <CardContent className="p-4">
-                  <h3 className="text-white font-medium group-hover:text-red-400 transition-colors">
+                  <h3 className="text-white font-medium group-hover:text-red-400 transition-colors line-clamp-2">
                     {video.title}
                   </h3>
                 </CardContent>
