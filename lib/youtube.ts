@@ -23,7 +23,7 @@ export async function getChannelVideos(
         `key=${YOUTUBE_API_KEY}&channelId=${CHANNEL_ID}&` +
         `part=snippet&order=date&type=video&maxResults=${maxResults}`,
       {
-        next: { revalidate: 3600 }, // Cache for 1 hour
+        next: { revalidate: 300 }, // Cache for 5 minutes
       }
     );
 
