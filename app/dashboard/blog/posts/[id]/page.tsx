@@ -34,7 +34,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Save, Eye, EyeOff, ImageIcon } from "lucide-react";
+import { ArrowLeft, Save, Eye, EyeOff } from "lucide-react";
+import { FeaturedImageUpload } from "@/components/dashboard/blog/FeaturedImageUpload";
 
 // Dynamically import the editor to avoid SSR issues
 const PostEditor = dynamic(
@@ -413,35 +414,13 @@ export default function PostEditorPage() {
 
               {/* Featured Image */}
               <div className="space-y-2">
-                <Label htmlFor="featured_image" className="text-white">
-                  Featured Image URL
-                </Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="featured_image"
-                    value={formData.featured_image}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        featured_image: e.target.value,
-                      })
-                    }
-                    placeholder="https://..."
-                    className="bg-slate-900 border-slate-600"
-                  />
-                </div>
-                {formData.featured_image && (
-                  <div className="mt-2 rounded-lg overflow-hidden border border-slate-700">
-                    <img
-                      src={formData.featured_image}
-                      alt="Featured"
-                      className="w-full h-32 object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
-                      }}
-                    />
-                  </div>
-                )}
+                <Label className="text-white">Featured Image</Label>
+                <FeaturedImageUpload
+                  value={formData.featured_image}
+                  onChange={(url) =>
+                    setFormData({ ...formData, featured_image: url })
+                  }
+                />
               </div>
             </CardContent>
           </Card>

@@ -4,12 +4,21 @@ import LegacyLogo from "../public/assets/legacy-logo-white.png";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { useState } from "react";
-import { Menu, X, LayoutDashboard } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Menu, X, LayoutDashboard, LogOut } from "lucide-react";
 import { usePublicAuth } from "@/providers/public-auth-provider";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated } = usePublicAuth();
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.refresh();
+  };
 
   const navLinks = [
     { href: "/#location", label: "Location" },
@@ -49,14 +58,24 @@ export default function Header() {
           </nav>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-2">
             {isAuthenticated ? (
-              <Link href="/dashboard">
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                  <LayoutDashboard className="w-4 h-4 mr-2" />
-                  Dashboard
+              <>
+                <Link href="/dashboard">
+                  <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button
+                  variant="outline"
+                  className="border-slate-600 text-slate-300 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
                 </Button>
-              </Link>
+              </>
             ) : (
               <Link href="/login">
                 <Button
@@ -99,12 +118,25 @@ export default function Header() {
                 </Link>
               ))}
               {isAuthenticated ? (
-                <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                    <LayoutDashboard className="w-4 h-4 mr-2" />
-                    Dashboard
+                <div className="flex flex-col gap-2">
+                  <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                    <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
+                      <LayoutDashboard className="w-4 h-4 mr-2" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="w-full border-slate-600 text-slate-300 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50"
+                    onClick={() => {
+                      handleLogout();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
                   </Button>
-                </Link>
+                </div>
               ) : (
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                   <Button

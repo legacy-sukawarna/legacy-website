@@ -5,10 +5,20 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useUploadImage } from "@/hooks/useBlog";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Bold,
   Italic,
@@ -25,6 +35,7 @@ import {
   Heading2,
   Heading3,
   Minus,
+  FileCode,
 } from "lucide-react";
 
 interface PostEditorProps {
@@ -41,6 +52,8 @@ export const PostEditor = ({
   const { toast } = useToast();
   const uploadImage = useUploadImage();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [htmlImportOpen, setHtmlImportOpen] = useState(false);
+  const [htmlInput, setHtmlInput] = useState("");
 
   const editor = useEditor({
     extensions: [
@@ -122,6 +135,27 @@ export const PostEditor = ({
       onChange(editor.getHTML());
     },
   });
+
+  // Sync content when it changes externally (e.g., loading existing post)
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content, false);
+    }
+  }, [content, editor]);
+
+  // Handle HTML import
+  const handleImportHtml = useCallback(() => {
+    if (editor && htmlInput.trim()) {
+      editor.commands.setContent(htmlInput, false);
+      onChange(htmlInput);
+      setHtmlImportOpen(false);
+      setHtmlInput("");
+      toast({
+        title: "HTML imported",
+        description: "Your HTML content has been loaded into the editor.",
+      });
+    }
+  }, [editor, htmlInput, onChange, toast]);
 
   const handleImageUpload = useCallback(
     async (file: File) => {
@@ -384,6 +418,59 @@ export const PostEditor = ({
           accept="image/*"
           onChange={handleFileSelect}
         />
+
+        <div className="w-px h-6 bg-slate-600 mx-1.5 self-center" />
+
+        {/* Import HTML */}
+        <Dialog open={htmlImportOpen} onOpenChange={setHtmlImportOpen}>
+          <DialogTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-slate-300 hover:text-white hover:bg-slate-700"
+              title="Import HTML"
+            >
+              <FileCode className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px] bg-slate-800 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="text-white">Import HTML</DialogTitle>
+              <DialogDescription>
+                Paste your HTML content below. This will replace the current
+                editor content.
+              </DialogDescription>
+            </DialogHeader>
+            <Textarea
+              value={htmlInput}
+              onChange={(e) => setHtmlInput(e.target.value)}
+              placeholder="<h2>Your HTML content here...</h2>"
+              className="min-h-[300px] font-mono text-sm bg-slate-900 border-slate-600"
+            />
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setHtmlImportOpen(false);
+                  setHtmlInput("");
+                }}
+                className="border-slate-600"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={handleImportHtml}
+                className="bg-orange-500 hover:bg-orange-600"
+                disabled={!htmlInput.trim()}
+              >
+                Import
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         <div className="flex-1" />
 
