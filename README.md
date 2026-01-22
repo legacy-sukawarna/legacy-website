@@ -1,50 +1,216 @@
-# Next.js Project with Prisma, Supabase, TailwindCSS and Shadcn
+# Legacy Website
 
-## Introduction
+A Next.js frontend application for community management, providing a modern dashboard for user management, connect groups, attendance tracking, blogging, and more.
 
-This project demonstrates setting up a Next.js application utilizing Prisma as an ORM, Supabase for authentication and real-time database functionalities, Shadcn for UI components and styling (with TailwindCSS), and Google Sign-Up for authentication. It also includes the use of the new `supabase/ssr` package for creating Supabase clients optimized for Server-Side Rendering.
+## Features
 
-## Table of Contents
+- **Authentication**: Supabase Auth with Google Sign-In
+- **Dashboard**: Admin panel with analytics and charts
+- **User Management**: CRUD operations with role-based views
+- **Connect Groups**: Group management with mentor-mentee relationships
+- **Attendance Tracking**: Record and report connect group attendance
+- **Blog System**: Package-based blog with rich text editor (Tiptap)
+- **Public Pages**: Blog, sermons, yearly verse
+- **Dark/Light Mode**: Theme toggle with next-themes
+- **Responsive Design**: Mobile-friendly UI
 
-- [Introduction](#introduction)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Dependencies](#dependencies)
-- [Configuration](#configuration)
-- [Examples](#examples)
-- [Troubleshooting](#troubleshooting)
-- [Contributors](#contributors)
-- [License](#license)
+## Tech Stack
 
-## Installation
+- **Framework**: Next.js 14+ (App Router)
+- **Language**: TypeScript 5+
+- **Authentication**: Supabase Auth (SSR)
+- **State Management**: Zustand
+- **Data Fetching**: React Query (@tanstack/react-query)
+- **UI Components**: Radix UI + Shadcn/ui
+- **Styling**: Tailwind CSS
+- **Forms**: React Hook Form + Zod
+- **Rich Text Editor**: Tiptap
+- **Charts**: Recharts
+- **HTTP Client**: Axios
+- **Database Types**: Prisma (for type generation)
 
-To get started with this project, follow these steps:
+## Project Structure
 
-1. Clone the repository.
-2. Install dependencies by running `npm install`.
-3. Populate your `.env` file with necessary environment variables including `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+```
+app/
+├── (auth)/                  # Auth routes
+│   ├── auth/callback/       # OAuth callback
+│   ├── auth/confirm/        # Email confirmation
+│   └── login/               # Login page
+├── dashboard/               # Protected dashboard
+│   ├── blog/                # Blog management
+│   │   ├── packages/        # Package management
+│   │   └── posts/           # Post management
+│   ├── connect/             # Connect group management
+│   ├── connect-attendance/  # Attendance tracking
+│   ├── report/              # Reports
+│   └── user-management/     # User CRUD
+├── blog/                    # Public blog
+├── sermons/                 # Sermons page
+├── yearly-verse/            # Yearly verse page
+└── page.tsx                 # Landing page
 
-## Usage
+components/
+├── dashboard/               # Dashboard components
+│   ├── blog/                # Blog editor components
+│   ├── chart/               # Chart components
+│   ├── connect/             # Connect group components
+│   ├── connect-attendance/  # Attendance components
+│   └── users-management/    # User management components
+└── ui/                      # Shadcn UI components
 
-### Prisma
+hooks/                       # React Query hooks
+├── useAuth.ts               # Auth hooks
+├── useBlog.ts               # Blog hooks
+├── useConnectAttendance.ts  # Attendance hooks
+├── useGroup.ts              # Group hooks
+└── useUser.ts               # User hooks
 
-1. Initialize Prisma using `npx prisma init`.
-2. Add your database model to `schema.prisma` and execute `npx prisma db push` to sync your database.
+lib/
+├── api.ts                   # API client (Axios)
+├── supabase/                # Supabase clients
+│   ├── client.ts            # Browser client
+│   ├── middleware.ts        # Middleware client
+│   └── server.ts            # Server client
+└── utils.ts                 # Utility functions
 
-### Supabase
+store/
+└── authStore.ts             # Zustand auth store
 
-1. Set up a new Supabase project and add the URL and Anon Key to your `.env` file.
-2. Install the Supabase CLI and generate types based on your schema with `npx supabase gen types typescript --project-id YOUR_PROJECT_ID`.
-3. Update Email Templates in Supabase
+types/                       # TypeScript types
+├── blog.d.ts
+├── common.d.ts
+├── connect-absence.d.ts
+└── user.d.ts
+```
 
-To enhance the security and usability of your application, it's crucial to update your email templates in Supabase. This ensures that users are redirected to the new confirmation endpoint for various actions. Follow the instructions below to update the URLs in your email templates accordingly.
+## Getting Started
 
-#### Confirm Signup Template
+### Prerequisites
+
+- Node.js 20+
+- npm
+- Backend API running (community-core-api)
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your configuration
+
+# Generate Prisma types (optional, for type hints)
+npx prisma generate
+```
+
+### Environment Variables
+
+```bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# API
+NEXT_PUBLIC_API_URL=http://localhost:3001
+
+# Database (for Prisma types)
+DATABASE_URL=postgresql://...
+```
+
+### Running the Application
+
+```bash
+# Development
+npm run dev
+
+# Build
+npm run build
+
+# Production
+npm run start
+```
+
+The app will be available at `http://localhost:3000`.
+
+## Development
+
+### Adding UI Components
+
+```bash
+# Add Shadcn components
+npx shadcn-ui@latest add [component-name]
+```
+
+### API Integration Pattern
+
+This project uses a simple, pragmatic approach:
+
+1. **API Client** (`lib/api.ts`) - Centralized HTTP client with endpoint definitions
+2. **React Query Hooks** (`hooks/use*.ts`) - Data fetching and cache management
+
+```typescript
+// Example: Using a hook in a component
+import { useUsers, useCreateUser } from "@/hooks/useUser";
+
+function UserList() {
+  const { data, isLoading } = useUsers({ page: 1, limit: 10 });
+  const createUser = useCreateUser();
+  
+  // Cache invalidation is handled automatically in hooks
+  const handleCreate = () => {
+    createUser.mutate({ name: "John", email: "john@example.com" });
+  };
+}
+```
+
+### Commit Guidelines
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/).
+
+```bash
+# Interactive commit (recommended)
+npm run commit
+
+# Manual commit
+git commit -m "feat: add new feature"
+```
+
+**Commit Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `refactor`: Code refactoring
+- `docs`: Documentation
+- `perf`: Performance improvement
+- `test`: Tests
+- `build`: Build changes
+- `chore`: Other changes
+
+### Creating Releases
+
+```bash
+# Patch (1.0.0 → 1.0.1)
+npm run release
+
+# Minor (1.0.0 → 1.1.0)
+npm run release:minor
+
+# Major (1.0.0 → 2.0.0)
+npm run release:major
+```
+
+## Supabase Configuration
+
+### Email Templates
+
+Update email templates in Supabase dashboard to use the correct confirmation endpoint:
+
+#### Confirm Signup
 
 ```html
 <h2>Confirm your signup</h2>
-
 <p>Follow this link to confirm your user:</p>
 <p>
   <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email">
@@ -53,28 +219,22 @@ To enhance the security and usability of your application, it's crucial to updat
 </p>
 ```
 
-#### Invite User Template
+#### Reset Password
+
 ```html
-<h2>You have been invited</h2>
-
+<h2>Reset Password</h2>
+<p>Follow this link to reset the password for your user:</p>
 <p>
-  You have been invited to create a user on {{ .SiteURL }}. Follow this link to
-  accept the invite:
-</p>
-
-<p>
-  <a
-    href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=/path-to-your-update-password-page"
-  >
-    Accept the invite
+  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/password-reset">
+    Reset Password
   </a>
 </p>
 ```
 
-#### Magic Link Template
+#### Magic Link
+
 ```html
 <h2>Magic Link</h2>
-
 <p>Follow this link to login:</p>
 <p>
   <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink">
@@ -83,11 +243,11 @@ To enhance the security and usability of your application, it's crucial to updat
 </p>
 ```
 
-#### Change Email Address Template
+#### Change Email
+
 ```html
 <h2>Confirm Change of Email</h2>
-
-<p>Follow this link to confirm the update of your email from {{ .Email }} to {{ .NewEmail }}:</p>
+<p>Follow this link to confirm the update of your email:</p>
 <p>
   <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change">
     Change Email
@@ -95,136 +255,44 @@ To enhance the security and usability of your application, it's crucial to updat
 </p>
 ```
 
-#### Reset Password Template
-```html
-<h2>Reset Password</h2>
+## Pages Overview
 
-<p>Follow this link to reset the password for your user:</p>
-<p>
-  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/path-to-your-update-password-page">
-    Reset Password
-  </a>
-</p>
-```
+### Public Pages
 
+| Route | Description |
+|-------|-------------|
+| `/` | Landing page |
+| `/login` | Login with Google |
+| `/blog` | Blog listing |
+| `/blog/[package]/[post]` | Blog post |
+| `/sermons` | Sermons page |
+| `/yearly-verse` | Yearly verse display |
 
-### Shadcn
+### Dashboard Pages (Protected)
 
-1. Initialize Shadcn with `npx shadcn-ui@latest init` following the on-screen instructions.
-2. To install all Shadcn components, run `npx shadcn-ui@latest add`.
+| Route | Description | Roles |
+|-------|-------------|-------|
+| `/dashboard` | Dashboard home | All authenticated |
+| `/dashboard/user-management` | User CRUD | ADMIN |
+| `/dashboard/connect` | Connect groups | ADMIN, MENTOR |
+| `/dashboard/connect-attendance` | Attendance | ADMIN, MENTOR |
+| `/dashboard/report` | Reports | ADMIN, MENTOR |
+| `/dashboard/blog/packages` | Blog packages | ADMIN |
+| `/dashboard/blog/posts` | Blog posts | ADMIN, WRITER |
 
-### Supabase SSR
+## Related Projects
 
-Utilize the `supabase/ssr` package for creating Supabase clients. This involves setting up client, middleware, and server utilities under the `utils/supabase` directory.
+- **community-core-api** - Backend API (NestJS)
 
-- **Client:** `utils/supabase/client.ts`
-- **Middleware:** `utils/supabase/middleware.ts`
-- **Server:** `utils/supabase/server.ts`
+## Resources
 
-### Authentication
-
-Implement sign up, sign in, and sign out functionalities using Supabase's authentication features, including Google Sign-Up.
-
-## Features
-
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Prisma ORM for simplified database querying.
-- Supabase for real-time database and authentication.
-- Shadcn for sleek UI components and styling.
-- Integration with Google Sign-Up for an additional authentication method.
-- Supabase SSR for optimized server-side Supabase client creation.
-
-## Dependencies
-
-- Next.js
-- Prisma
-- Supabase
-- Shadcn
-- @supabase/auth-helpers-nextjs
-- next-themes
-- supabase/ssr
-
-## Configuration
-
-Key configurations involve setting up the `.env` file and customizing the `schema.prisma` for your database models.
-
-## Examples
-
-A basic usage example is described in the [Usage](#usage) section.
-
-## Development
-
-### Commit Guidelines
-
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) for standardized commit messages and automated changelog generation.
-
-**Quick Start:**
-
-```bash
-# Use the interactive commit tool (recommended)
-npm run commit
-
-# Or manually with format:
-git commit -m "feat: your feature description"
-```
-
-**Commit Types:**
-- `feat`: New feature
-- `fix`: Bug fix
-- `refactor`: Code refactoring
-- `docs`: Documentation changes
-- `perf`: Performance improvements
-- `test`: Tests
-- `build`: Build system changes
-- `chore`: Other changes
-
-**Creating a Release:**
-
-```bash
-# Patch release (1.0.0 → 1.0.1)
-npm run release
-
-# Minor release (1.0.0 → 1.1.0)
-npm run release:minor
-
-# Major release (1.0.0 → 2.0.0)
-npm run release:major
-```
-
-This will automatically:
-- Bump the version in `package.json`
-- Generate/update `CHANGELOG.md`
-- Create a git tag
-- Commit the changes
-
-For detailed guidelines, see [COMMIT_GUIDE.md](./COMMIT_GUIDE.md).
-
-## Troubleshooting
-
-For any issues encountered during setup or usage, refer to the official documentation of the technologies used.
-
-## Contributors
-
-Feel free to contribute to this project. Any help is welcomed!
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Supabase Documentation](https://supabase.com/docs)
+- [React Query Documentation](https://tanstack.com/query/latest)
+- [Shadcn/ui](https://ui.shadcn.com)
+- [Tailwind CSS](https://tailwindcss.com)
+- [AGENTS.md](./AGENTS.md) - Detailed development guidelines for AI assistants
 
 ## License
 
-This project is licensed under the MIT License. For more details, see the `LICENSE` file.
-
-## References
-
-### GitHub Repository
-
-For the source code and latest updates, visit the official Supabase GitHub repository: ["Supabase Github"](https://github.com/supabase/supabase)
-
-### Reference Blog Post
-
-This project setup was inspired by and based on the blog post: ["Setting up a Next.js project with Prisma"](https://dev.to/isaacdyor/setting-up-nextjs-project-with-prisma-200j). For a detailed guide and additional context, check out this resource.
+[MIT](LICENSE)
