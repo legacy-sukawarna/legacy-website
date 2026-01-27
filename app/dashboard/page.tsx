@@ -63,7 +63,7 @@ export default function DashboardPage() {
               <>
                 <li>
                   <Link
-                    href="https://drive.google.com/drive/folders/1R5tbR7AJeNzDixeHDZ7pEfhVTCFSt3ny?usp=sharing"
+                    href="https://drive.google.com/drive/folders/1bMaUNBmBR-FeCUAX1hPds8vps7apI8CS"
                     target="_blank"
                     className="flex items-center justify-between p-3 rounded-lg bg-slate-700/30 hover:bg-orange-500/10 hover:border-orange-500/30 border border-transparent transition-all duration-200 group"
                   >
