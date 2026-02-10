@@ -121,6 +121,7 @@ export function MentorAbsenceList() {
     },
     {
       id: "actions",
+      header: "Actions",
       cell: ({ row }) => {
         const absence = row.original;
         return (
@@ -178,7 +179,7 @@ export function MentorAbsenceList() {
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
           },
-        }
+        },
       );
       setGroups(response.data);
     } catch (error) {
@@ -202,7 +203,7 @@ export function MentorAbsenceList() {
             end_date: dateRange?.to?.toISOString(),
             group_id: selectedGroupId === "all" ? undefined : selectedGroupId,
           },
-        }
+        },
       );
       setAbsences(response.data);
     } catch (error) {
@@ -241,7 +242,7 @@ export function MentorAbsenceList() {
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
           },
-        }
+        },
       );
 
       toast({
@@ -281,7 +282,7 @@ export function MentorAbsenceList() {
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
           },
-        }
+        },
       );
 
       toast({
@@ -309,7 +310,9 @@ export function MentorAbsenceList() {
     <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden">
       <div className="p-5 border-b border-slate-700/50">
         <h2 className="text-lg font-semibold text-white">Attendance Records</h2>
-        <p className="text-slate-400 text-sm mt-1">View and manage connect group attendance</p>
+        <p className="text-slate-400 text-sm mt-1">
+          View and manage connect group attendance
+        </p>
       </div>
       <div className="p-5">
         <div className="space-y-4">
@@ -335,7 +338,7 @@ export function MentorAbsenceList() {
                   variant={"outline"}
                   className={cn(
                     "w-[300px] justify-start text-left font-normal bg-slate-700/50 border-slate-600 text-slate-200 hover:bg-slate-700 hover:text-white",
-                    !dateRange && "text-slate-400"
+                    !dateRange && "text-slate-400",
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4 text-orange-400" />
@@ -353,7 +356,10 @@ export function MentorAbsenceList() {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-slate-800 border-slate-700" align="start">
+              <PopoverContent
+                className="w-auto p-0 bg-slate-800 border-slate-700"
+                align="start"
+              >
                 <Calendar
                   initialFocus
                   mode="range"
@@ -375,14 +381,20 @@ export function MentorAbsenceList() {
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="border-slate-700/50 hover:bg-transparent">
+                  <TableRow
+                    key={headerGroup.id}
+                    className="border-slate-700/50 hover:bg-transparent"
+                  >
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} className="text-slate-300 bg-slate-700/30">
+                      <TableHead
+                        key={header.id}
+                        className="text-slate-300 bg-slate-700/30"
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     ))}
@@ -404,12 +416,15 @@ export function MentorAbsenceList() {
                   </TableRow>
                 ) : table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="border-slate-700/50 hover:bg-slate-700/20">
+                    <TableRow
+                      key={row.id}
+                      className="border-slate-700/50 hover:bg-slate-700/20"
+                    >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="text-slate-300">
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </TableCell>
                       ))}
@@ -431,7 +446,8 @@ export function MentorAbsenceList() {
 
           <div className="flex items-center justify-between pt-2">
             <div className="text-sm text-slate-400">
-              Page {absences.pagination.page} of {absences.pagination.totalPages}
+              Page {absences.pagination.page} of{" "}
+              {absences.pagination.totalPages}
             </div>
             <div className="flex gap-2">
               <Button
