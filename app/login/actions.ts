@@ -42,7 +42,7 @@ export const signUp = async (formData: FormData) => {
 };
 
 export const signInWithGoogleOAuth = async () => {
-  const origin = headers().get("origin");
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || headers().get("origin");
   const supabase = createClient();
   const { error, data } = await supabase.auth.signInWithOAuth({
     options: {
