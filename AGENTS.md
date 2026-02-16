@@ -333,12 +333,28 @@ async getData(@Req() request) {
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
+# Site URL (IMPORTANT for OAuth redirects)
+# Local: http://localhost:3000
+# Production: https://www.sukawarna-legacy.web.id
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
 # API
 NEXT_PUBLIC_API_URL=http://localhost:3001
 
 # Database (for Prisma)
 DATABASE_URL=postgresql://...
 ```
+
+### Changing Frontend Domain
+
+When changing the frontend domain (e.g., from `old-domain.com` to `new-domain.com`):
+
+1. **Update `NEXT_PUBLIC_SITE_URL`** in your hosting platform's environment variables
+2. **Update Supabase Redirect URLs**: Dashboard → Authentication → URL Configuration
+   - Add `https://new-domain.com/auth/callback`
+   - Add `https://www.new-domain.com/auth/callback`
+3. **Update Backend CORS**: In `community-core-api/src/main.ts`, add the new domain to `app.enableCors()` origin array
+4. **Redeploy both frontend and backend**
 
 ### Backend (.env)
 
@@ -460,9 +476,28 @@ API responses use consistent pagination:
 
 **Solution**: Ensure email templates in Supabase point to correct domain, update redirect URLs in Supabase dashboard
 
+### Issue: Google OAuth redirects to localhost in production
+
+**Solution**: This is a common issue when changing domains. You need to update three places:
+
+1. **Supabase Dashboard** → Authentication → URL Configuration → **Redirect URLs**
+   - Add: `https://your-domain.com/auth/callback`
+   - Add: `https://www.your-domain.com/auth/callback` (if using www)
+
+2. **Frontend environment variable** (`NEXT_PUBLIC_SITE_URL`)
+   - Set in your hosting platform (Vercel, etc.)
+   - Value: `https://your-domain.com` (your production URL)
+
+3. **Backend CORS configuration** (`community-core-api/src/main.ts`)
+   - Add your domain to the `origin` array in `app.enableCors()`
+   - Include both `www` and non-`www` versions
+   - Redeploy the backend
+
+The Google OAuth flow uses `NEXT_PUBLIC_SITE_URL` in `app/login/actions.ts` for the `redirectTo` parameter.
+
 ### Issue: CORS errors from API
 
-**Solution**: Check NestJS CORS configuration in `main.ts`, ensure frontend URL is whitelisted
+**Solution**: Check NestJS CORS configuration in `community-core-api/src/main.ts`, ensure frontend URL is whitelisted in the `origin` array. Add both `www` and non-`www` versions of your domain. Then redeploy the backend.
 
 ### Issue: Prisma Client out of sync
 
@@ -505,10 +540,11 @@ API responses use consistent pagination:
 
 ### Backend
 
-- Platform: Fly.io (configured) or any Docker host
+- Platform: VPS with Docker (deployed at `https://community-api.dokimos.my.id`)
 - Build: Uses Dockerfile
-- Database migrations: Run before deployment
+- Database migrations: Run automatically on container start
 - Health check: `/health` endpoint
+- Deployment: SSH into VPS, pull changes, rebuild Docker container
 
 ---
 
