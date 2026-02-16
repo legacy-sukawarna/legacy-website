@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const origin = requestUrl.origin;
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin;
 
   if (code) {
     try {
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
         // The user can still proceed even if backend callback fails
         console.error(
           "Backend auth callback error:",
-          error?.response?.data || error?.message
+          error?.response?.data || error?.message,
         );
       }
 
