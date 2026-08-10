@@ -20,6 +20,8 @@ export const siteConfig = {
     youtube: "https://www.youtube.com/@legacygbisukawarna",
   },
 
+  memberSystemUrl: "https://system.sukawarna-legacy.web.id",
+
   // YouTube Configuration
   youtube: {
     channelUrl: "https://www.youtube.com/@legacygbisukawarna",

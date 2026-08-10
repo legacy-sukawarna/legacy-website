@@ -1,8 +1,23 @@
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
+import { isLegacyPrivatePath } from "@/lib/public-site-guard";
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request);
+  const response = await updateSession(request);
+
+  if (
+    process.env.NEXT_PUBLIC_PUBLIC_SITE_ONLY === "true" &&
+    isLegacyPrivatePath(request.nextUrl.pathname)
+  ) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/";
+    redirectUrl.search = "";
+    const redirectResponse = NextResponse.redirect(redirectUrl);
+    response.cookies.getAll().forEach((cookie) => redirectResponse.cookies.set(cookie));
+    return redirectResponse;
+  }
+
+  return response;
 }
 
 export const config = {

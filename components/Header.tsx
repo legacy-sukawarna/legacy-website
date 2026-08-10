@@ -1,156 +1,91 @@
 "use client";
+
 import Link from "next/link";
-import LegacyLogo from "../public/assets/legacy-logo-white.png";
-import { Button } from "./ui/button";
-import Image from "next/image";
+import { Instagram, Menu, X, Youtube } from "lucide-react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Menu, X, LayoutDashboard, LogOut } from "lucide-react";
-import { usePublicAuth } from "@/providers/public-auth-provider";
-import { createClient } from "@/lib/supabase/client";
+
+import { siteConfig } from "@/config/site";
+import LanguageToggle from "@/components/LanguageToggle";
+import { LocalizedText } from "@/components/LocalizedText";
+
+const navLinks = [
+  { href: "/#visit", en: "Visit", id: "Kunjungi" },
+  { href: "/sermons", en: "Sermons", id: "Khotbah" },
+  { href: "/blog", en: "Blog", id: "Blog" },
+];
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isAuthenticated } = usePublicAuth();
-  const router = useRouter();
-  const supabase = createClient();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.refresh();
-  };
-
-  const navLinks = [
-    { href: "/#location", label: "Location" },
-    { href: "/sermons", label: "Sermons" },
-    { href: "/blog", label: "Blog" },
-    { href: "/yearly-verse", label: "Yearly Verse" },
-  ];
 
   return (
-    <header className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800/50 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
-              <Image
-                src={LegacyLogo}
-                alt="Legacy Logo"
-                width={80}
-                height={40}
-                className="rounded-lg h-10 w-auto"
-              />
+    <header className="legacy-header">
+      <div className="legacy-shell legacy-header-inner">
+        <Link href="/" className="legacy-header-logo" aria-label="Sukawarna Legacy home">
+          <span className="legacy-brand" aria-hidden="true">
+            <span className="legacy-brand-place">Sukawarna</span>
+            <span className="legacy-brand-main">Legacy</span>
+          </span>
+        </Link>
+
+        <nav className="legacy-header-nav" aria-label="Primary navigation">
+          {navLinks.map((link) => (
+            <Link key={link.href} href={link.href}>
+              <LocalizedText en={link.en} id={link.id} />
             </Link>
-          </div>
+          ))}
+        </nav>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-slate-300 hover:text-orange-400 transition-colors font-medium"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-2">
-            {isAuthenticated ? (
-              <>
-                <Link href="/dashboard">
-                  <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                    <LayoutDashboard className="w-4 h-4 mr-2" />
-                    Dashboard
-                  </Button>
-                </Link>
-                <Button
-                  variant="outline"
-                  className="border-slate-600 text-slate-300 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <Link href="/login">
-                <Button
-                  variant="outline"
-                  className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500"
-                >
-                  Log in
-                </Button>
-              </Link>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
-            <button
-              className="text-slate-300 hover:text-white p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
-          </div>
+        <div className="legacy-header-actions">
+          <LanguageToggle />
+          <a
+            className="legacy-social-link"
+            href={siteConfig.social.instagram}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Sukawarna Legacy on Instagram"
+          >
+            <Instagram aria-hidden="true" size={18} />
+          </a>
+          <a
+            className="legacy-social-link"
+            href={siteConfig.social.youtube}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Sukawarna Legacy on YouTube"
+          >
+            <Youtube aria-hidden="true" size={18} />
+          </a>
+          <Link className="legacy-header-cta" href="/#visit">
+            <LocalizedText en="Plan your visit" id="Rencanakan kunjungan" />
+          </Link>
         </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-slate-800">
-            <nav className="flex flex-col space-y-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-slate-300 hover:text-orange-400 transition-colors font-medium py-2"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              {isAuthenticated ? (
-                <div className="flex flex-col gap-2">
-                  <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                    <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                      <LayoutDashboard className="w-4 h-4 mr-2" />
-                      Dashboard
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="outline"
-                    className="w-full border-slate-600 text-slate-300 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50"
-                    onClick={() => {
-                      handleLogout();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </Button>
-                </div>
-              ) : (
-                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button
-                    variant="outline"
-                    className="w-full border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500"
-                  >
-                    Log in
-                  </Button>
-                </Link>
-              )}
-            </nav>
-          </div>
-        )}
+        <button
+          type="button"
+          className="legacy-menu-button"
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileMenuOpen}
+          onClick={() => setMobileMenuOpen((open) => !open)}
+        >
+          {mobileMenuOpen ? <X aria-hidden="true" size={22} /> : <Menu aria-hidden="true" size={22} />}
+        </button>
       </div>
+
+      {mobileMenuOpen && (
+        <div className="legacy-mobile-menu">
+          <nav className="legacy-shell" aria-label="Mobile navigation">
+            {navLinks.map((link) => (
+              <Link key={link.href} href={link.href} onClick={() => setMobileMenuOpen(false)}>
+                <LocalizedText en={link.en} id={link.id} />
+              </Link>
+            ))}
+            <LanguageToggle />
+            <Link className="legacy-header-cta legacy-mobile-cta" href="/#visit" onClick={() => setMobileMenuOpen(false)}>
+              <LocalizedText en="Plan your visit" id="Rencanakan kunjungan" />
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
