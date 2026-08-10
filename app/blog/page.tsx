@@ -1,46 +1,19 @@
 import Link from "next/link";
-import Header from "@/components/Header";
+import { ArrowLeft, ArrowRight, FolderOpen } from "lucide-react";
+
+import BlogPostCard from "@/components/BlogPostCard";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, User, FolderOpen } from "lucide-react";
-
-// This is a server component that fetches posts
-async function getPosts(packageId?: string) {
-  const params = new URLSearchParams();
-  if (packageId) params.set("package_id", packageId);
-
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/posts?${params.toString()}`,
-    {
-      cache: "no-store",
-    }
-  );
-
-  if (!res.ok) {
-    return {
-      results: [],
-      pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
-    };
-  }
-
-  return res.json();
-}
-
-async function getPackages() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/packages`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    return [];
-  }
-
-  return res.json();
-}
+import Header from "@/components/Header";
+import { LocalizedText } from "@/components/LocalizedText";
+import {
+  getPublicPackageFilter,
+  getPublicPackages,
+  getPublicPosts,
+  type PublicPackage,
+} from "@/lib/public-content";
 
 export const metadata = {
-  title: "Blog | Legacy",
+  title: "Blog | Sukawarna Legacy",
   description: "Read our latest posts and updates",
 };
 
@@ -50,162 +23,119 @@ export default async function BlogPage({
   searchParams: { package?: string };
 }) {
   const [postsData, packages] = await Promise.all([
-    getPosts(searchParams.package),
-    getPackages(),
+    getPublicPosts(searchParams.package, 20),
+    getPublicPackages(),
   ]);
 
-  const posts = postsData.results || [];
+  const posts = postsData.results;
   const selectedPackage = packages.find(
-    (p: Package) => p.id === searchParams.package
+    (pkg: PublicPackage) =>
+      pkg.id === searchParams.package || pkg.slug === searchParams.package,
   );
 
   return (
-    <div className="w-full flex flex-col min-h-screen bg-slate-950">
+    <div className="legacy-site min-h-[100dvh] bg-[var(--legacy-ink)] text-[var(--legacy-paper)]">
       <Header />
 
-      {/* Hero Section */}
-      <section className="relative pt-12 md:pt-16 pb-8 md:pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-8 transition-colors text-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-            {selectedPackage ? selectedPackage.name : "Our Blog"}
-          </h1>
-          <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-0">
-            {selectedPackage
-              ? selectedPackage.description || "Posts in this package"
-              : "Read our latest articles, updates, and insights"}
-          </p>
-        </div>
-      </section>
-
-      {/* Package Filter */}
-      {packages.length > 0 && (
-        <section className="px-4 sm:px-6 lg:px-8 pt-4 pb-10">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/blog">
-                <Badge
-                  variant={!selectedPackage ? "default" : "outline"}
-                  className={`px-5 py-2.5 text-sm font-medium cursor-pointer transition-all ${
-                    !selectedPackage
-                      ? "bg-orange-500 hover:bg-orange-600 text-white border-transparent"
-                      : "border-slate-600 text-slate-300 hover:border-orange-500 hover:text-orange-400"
-                  }`}
-                >
-                  All Posts
-                </Badge>
-              </Link>
-              {packages.map((pkg: Package) => (
-                <Link key={pkg.id} href={`/blog?package=${pkg.id}`}>
-                  <Badge
-                    variant={
-                      selectedPackage?.id === pkg.id ? "default" : "outline"
-                    }
-                    className={`px-5 py-2.5 text-sm font-medium cursor-pointer transition-all ${
-                      selectedPackage?.id === pkg.id
-                        ? "bg-orange-500 hover:bg-orange-600 text-white border-transparent"
-                        : "border-slate-600 text-slate-300 hover:border-orange-500 hover:text-orange-400"
-                    }`}
-                  >
-                    {pkg.name}
-                  </Badge>
-                </Link>
-              ))}
+      <main>
+        <section className="legacy-blog-hero">
+          <div className="legacy-shell">
+            <Link className="legacy-text-link" href="/">
+              <ArrowLeft aria-hidden="true" size={16} />
+              <LocalizedText en="Back to home" id="Kembali ke beranda" />
+            </Link>
+            <div className="legacy-blog-hero-copy">
+              <p className="legacy-kicker legacy-kicker-accent">
+                <LocalizedText en="The editorial library" id="Pustaka editorial" />
+              </p>
+              <h1 className="legacy-display legacy-blog-title">
+                {selectedPackage ? selectedPackage.name : <LocalizedText en="Our blog" id="Blog kami" />}
+              </h1>
+              <p className="legacy-blog-description">
+                {selectedPackage
+                  ? selectedPackage.description || (
+                      <LocalizedText
+                        en="Thoughts and stories from this collection."
+                        id="Gagasan dan cerita dari koleksi ini."
+                      />
+                    )
+                  : (
+                      <LocalizedText
+                        en="Messages, reflections, and practical ways to stay attached to God and to one another."
+                        id="Pesan, refleksi, dan cara-cara praktis untuk tetap melekat pada Tuhan dan satu sama lain."
+                      />
+                    )}
+              </p>
             </div>
           </div>
         </section>
-      )}
 
-      {/* Posts Grid */}
-      <section className="py-10 px-4 sm:px-6 lg:px-8 flex-grow">
-        <div className="max-w-6xl mx-auto">
-          {posts.length === 0 ? (
-            <Card className="bg-slate-800/50 border-slate-700">
-              <CardContent className="flex flex-col items-center justify-center py-16">
-                <FolderOpen className="h-16 w-16 text-slate-600 mb-6" />
-                <h3 className="text-xl font-semibold text-white mb-3">
-                  No posts yet
-                </h3>
-                <p className="text-slate-400 text-center max-w-sm">
-                  Check back later for new content. We&apos;re working on
-                  something great!
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.map((post: Post) => (
-                <Link
-                  key={post.id}
-                  href={`/blog/${post.package?.slug}/${post.slug}`}
-                  className="block"
-                >
-                  <Card className="bg-slate-800/50 border-slate-700/50 overflow-hidden hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-orange-500/5 group h-full flex flex-col">
-                    {post.featured_image ? (
-                      <div className="aspect-video overflow-hidden bg-slate-900">
-                        <img
-                          src={post.featured_image}
-                          alt={post.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
-                    ) : (
-                      <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                        <FolderOpen className="w-12 h-12 text-slate-700" />
-                      </div>
-                    )}
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Badge
-                          variant="outline"
-                          className="border-orange-500/50 text-orange-400 text-xs px-2 py-0.5"
-                        >
-                          {post.package?.name}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-white group-hover:text-orange-400 transition-colors line-clamp-2 text-lg leading-snug">
-                        {post.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-grow flex flex-col pt-0">
-                      {post.excerpt && (
-                        <p className="text-slate-400 text-sm line-clamp-3 mb-4 leading-relaxed flex-grow">
-                          {post.excerpt}
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-4 text-xs text-slate-500 mt-auto pt-4 border-t border-slate-700/50">
-                        <span className="flex items-center gap-1.5">
-                          <User className="w-3.5 h-3.5" />
-                          {post.author?.name}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5" />
-                          {post.published_at
-                            ? new Date(post.published_at).toLocaleDateString(
-                                "en-US",
-                                {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                }
-                              )
-                            : "Draft"}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
+        {packages.length > 0 && (
+          <section className="legacy-blog-filter-section" aria-label="Blog collections">
+            <div className="legacy-shell">
+              <div className="legacy-blog-filter-label">
+                <span className="legacy-kicker">
+                  <LocalizedText en="Browse by collection" id="Jelajahi berdasarkan koleksi" />
+                </span>
+                <ArrowRight aria-hidden="true" size={16} />
+              </div>
+              <nav className="legacy-blog-filters" aria-label="Blog collections">
+                <Link className={!selectedPackage ? "is-active" : undefined} href="/blog">
+                  <LocalizedText en="All posts" id="Semua tulisan" />
                 </Link>
-              ))}
+                {packages.map((pkg: PublicPackage) => (
+                  <Link
+                    key={pkg.id}
+                    className={selectedPackage?.id === pkg.id ? "is-active" : undefined}
+                    href={`/blog?package=${getPublicPackageFilter(pkg)}`}
+                  >
+                    {pkg.name}
+                  </Link>
+                ))}
+              </nav>
             </div>
-          )}
-        </div>
-      </section>
+          </section>
+        )}
+
+        <section className="legacy-blog-index" aria-labelledby="blog-index-heading">
+          <div className="legacy-shell">
+            <div className="legacy-section-heading legacy-section-heading-paper">
+              <div>
+                <p className="legacy-kicker legacy-kicker-accent">
+                  <LocalizedText en="Read at your own pace" id="Baca sesuai waktumu" />
+                </p>
+                <h2 id="blog-index-heading" className="legacy-display legacy-subsection-title">
+                  {selectedPackage ? selectedPackage.name : <LocalizedText en="Latest stories" id="Cerita terbaru" />}
+                </h2>
+              </div>
+              <span className="legacy-blog-result-count">
+                {postsData.pagination.total} <LocalizedText en="stories" id="cerita" />
+              </span>
+            </div>
+
+            {posts.length === 0 ? (
+              <div className="legacy-blog-empty">
+                <FolderOpen aria-hidden="true" size={34} strokeWidth={1.25} />
+                <h3>
+                  <LocalizedText en="No posts yet" id="Belum ada tulisan" />
+                </h3>
+                <p>
+                  <LocalizedText
+                    en="Check back later for something new."
+                    id="Kunjungi lagi nanti untuk sesuatu yang baru."
+                  />
+                </p>
+              </div>
+            ) : (
+              <div className="legacy-blog-grid">
+                {posts.map((post) => (
+                  <BlogPostCard key={post.id} post={post} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
 
       <Footer />
     </div>

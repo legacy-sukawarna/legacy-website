@@ -1,231 +1,461 @@
+import Image from "next/image";
 import Link from "next/link";
-import Header from "@/components/Header";
-import HeroCTA from "@/components/HeroCTA";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import Footer from "@/components/Footer";
-import { siteConfig } from "@/config/site";
-import { getChannelVideos } from "@/lib/youtube";
 import {
+  ArrowRight,
+  ArrowUpRight,
+  BookOpen,
+  CalendarDays,
+  Clock3,
   MapPin,
-  Clock,
-  Calendar,
-  Youtube,
-  Instagram,
-  ChevronDown,
-  ExternalLink,
+  Play,
 } from "lucide-react";
 
-export default async function Index() {
-  // Fetch latest videos from YouTube API
-  const youtubeVideos = await getChannelVideos(3);
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { LocalizedDate } from "@/components/LocalizedDate";
+import { LocalizedText } from "@/components/LocalizedText";
+import { siteConfig } from "@/config/site";
+import { getPublicPackages, getPublicPosts, type PublicPost } from "@/lib/public-content";
+import { getChannelVideos, type YouTubeVideo } from "@/lib/youtube";
 
-  // Use YouTube data if available, otherwise fall back to config
-  const featuredVideos =
-    youtubeVideos.length > 0
-      ? youtubeVideos.map((video) => ({
-          id: video.id,
-          title: video.title,
-        }))
-      : siteConfig.youtube.featuredVideos;
+const getEditorialContent = async () => {
+  const [postsResponse, packages] = await Promise.all([
+    getPublicPosts(undefined, 3),
+    getPublicPackages(),
+  ]);
+
+  return {
+    posts: postsResponse.results,
+    packages,
+  };
+};
+
+const getVideoThumbnail = (video: YouTubeVideo) =>
+  video.thumbnail || `https://i.ytimg.com/vi/${video.id}/maxresdefault.jpg`;
+
+const fallbackVideos: YouTubeVideo[] = siteConfig.youtube.featuredVideos.map(
+  (video) => ({
+    id: video.id,
+    title: video.title,
+    description: "",
+    publishedAt: "",
+    thumbnail: `https://i.ytimg.com/vi/${video.id}/maxresdefault.jpg`,
+    liveBroadcastContent: "none",
+  }),
+);
+
+const getPostHref = (post: PublicPost) =>
+  post.package?.slug
+    ? `/blog/${post.package.slug}/${post.slug}`
+    : `/blog`;
+
+const getVideoWatchUrl = (video: YouTubeVideo) =>
+  `https://www.youtube.com/watch?v=${video.id}`;
+
+const editorialFallback = {
+  title: "Stories for the journey",
+  excerpt:
+    "A growing library of messages, reflections, and practical ways to stay attached to God and to one another.",
+  image: "/assets/legacy-hero.png",
+};
+
+export const dynamic = "force-dynamic";
+
+export default async function Index() {
+  const [fetchedVideos, editorialContent] = await Promise.all([
+    getChannelVideos(5),
+    getEditorialContent(),
+  ]);
+
+  const youtubeVideos = fetchedVideos.length > 0 ? fetchedVideos : fallbackVideos;
+  const featuredVideo = youtubeVideos[0];
+  const secondaryVideos = youtubeVideos.slice(1);
+  const isFeaturedVideoLive = featuredVideo?.liveBroadcastContent === "live";
+
+  const featuredPost = editorialContent.posts[0];
+  const featuredStory = featuredPost ?? editorialFallback;
+
   return (
-    <div className="w-full flex flex-col min-h-screen bg-slate-950">
+    <div className="legacy-site min-h-[100dvh] overflow-hidden bg-[#0b0b0c] text-[#f4f1ea]">
       <Header />
 
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pb-24">
-        {/* Gradient Background */}
-        <div className="absolute inset-0 bg-slate-950" />
-        
-        {/* Animated Background Pattern */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-500 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-amber-600 rounded-full blur-3xl animate-pulse delay-1000" />
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
-            {siteConfig.service.name}
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-orange-200/90 mb-4 font-light">
-            {siteConfig.service.tagline}
-          </p>
-          
-          <div className="flex flex-wrap justify-center gap-4 text-slate-300 mb-10">
-            <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
-              <Calendar className="w-5 h-5 text-orange-400" />
-              {siteConfig.service.day}
-            </span>
-            <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
-              <Clock className="w-5 h-5 text-orange-400" />
-              {siteConfig.service.time}
-            </span>
-            <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
-              <MapPin className="w-5 h-5 text-orange-400" />
-              {siteConfig.service.location}
-            </span>
-          </div>
-
-          <HeroCTA mapsUrl={siteConfig.service.mapsUrl} />
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <ChevronDown className="w-8 h-8 text-white/50" />
-        </div>
-      </section>
-
-      {/* Service Information Section */}
-      <section id="about" className="py-24 px-4 bg-slate-950">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-4">
-            Join Our Community
-          </h2>
-          <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto">
-            Experience meaningful worship and genuine connections every Saturday
-          </p>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* When Card */}
-            <Card className="bg-slate-800/50 border-slate-700/50 hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group">
-              <CardContent className="p-8">
-                <div className="w-14 h-14 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500/30 transition-colors">
-                  <Clock className="w-7 h-7 text-orange-400" />
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">When</h3>
-                <p className="text-2xl font-bold text-orange-400 mb-1">{siteConfig.service.day}</p>
-                <p className="text-slate-400">{siteConfig.service.time}</p>
-              </CardContent>
-            </Card>
-
-            {/* Where Card */}
-            <Card className="bg-slate-800/50 border-slate-700/50 hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group">
-              <CardContent className="p-8">
-                <div className="w-14 h-14 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500/30 transition-colors">
-                  <MapPin className="w-7 h-7 text-orange-400" />
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">Where</h3>
-                <p className="text-lg font-semibold text-white mb-1">{siteConfig.service.location}</p>
-                <p className="text-slate-400 text-sm mb-1">{siteConfig.service.locationDetail}</p>
-                <p className="text-slate-500 text-sm">{siteConfig.service.address}</p>
-              </CardContent>
-            </Card>
-
-            {/* Directions Card */}
-            <Card className="bg-slate-800/50 border-slate-700/50 hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group md:col-span-2 lg:col-span-1">
-              <CardContent className="p-8 flex flex-col h-full">
-                <div className="w-14 h-14 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500/30 transition-colors">
-                  <ExternalLink className="w-7 h-7 text-orange-400" />
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">Find Us</h3>
-                <p className="text-slate-400 mb-6 flex-grow">Get directions to our location via Google Maps</p>
+      <main>
+        <section className="legacy-hero border-b border-white/15">
+          <div className="legacy-shell legacy-hero-grid">
+            <div className="legacy-hero-copy">
+              <p className="legacy-wordmark" aria-label="Sukawarna Legacy">
+                <span className="legacy-wordmark-place">Sukawarna</span>
+                <span className="legacy-wordmark-main">Legacy</span>
+              </p>
+              <h1 className="legacy-display legacy-hero-title">
+                <LocalizedText
+                  en={
+                    <>
+                      Attach With God,
+                      <br />
+                      Attach With Others
+                    </>
+                  }
+                  id={
+                    <>
+                      Melekat pada Tuhan,
+                      <br />
+                      Melekat satu sama lain
+                    </>
+                  }
+                />
+              </h1>
+              <p className="legacy-hero-description">
+                <LocalizedText
+                  en="A youth church community in Bandung, passionate about Jesus, people, and the next generation."
+                  id="Komunitas gereja muda di Bandung yang berpusat pada Yesus, sesama, dan generasi berikutnya."
+                />
+              </p>
+              <div className="flex flex-wrap items-center gap-6">
+                <Link className="legacy-button legacy-button-primary" href="#visit">
+                  <LocalizedText en="Plan your visit" id="Rencanakan kunjungan" />
+                  <ArrowRight aria-hidden="true" size={18} />
+                </Link>
                 <a
-                  href={siteConfig.service.mapsUrl}
+                  className="legacy-text-link"
+                  href={siteConfig.youtube.channelUrl}
                   target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full"
+                  rel="noreferrer"
                 >
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    Open in Maps
-                  </Button>
+                  <LocalizedText en="Watch on YouTube" id="Tonton di YouTube" />
+                  <ArrowUpRight aria-hidden="true" size={16} />
                 </a>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+              </div>
+            </div>
 
-      {/* YouTube Videos Section */}
-      <section id="services" className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Watch Our Latest Videos
-            </h2>
-            <p className="text-slate-400 mb-6 max-w-2xl mx-auto">
-              Catch up on our sermons and worship sessions
-            </p>
-            <a
-              href={siteConfig.youtube.channelUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300">
-                <Youtube className="w-5 h-5 mr-2" />
-                Visit Our Channel
-              </Button>
-            </a>
+            <div className="legacy-hero-image-wrap">
+              <Image
+                src="/assets/legacy-hero.png"
+                alt="Young adults worshipping together at Sukawarna Legacy"
+                fill
+                priority
+                sizes="(max-width: 767px) 100vw, 58vw"
+                className="legacy-hero-image"
+              />
+              <div className="legacy-hero-image-note">
+                <span><LocalizedText en="Saturday" id="Sabtu" /></span>
+                <span>5PM WIB</span>
+              </div>
+            </div>
           </div>
+        </section>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredVideos.map((video, index) => (
-              <Card key={video.id || index} className="bg-slate-800/50 border-slate-700/50 overflow-hidden hover:border-red-500/50 transition-all duration-300 hover:-translate-y-1 group">
-                <div className="aspect-video">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${video.id}`}
-                    title={video.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
+        <section className="legacy-media-section" aria-labelledby="latest-heading">
+          <div className="legacy-shell">
+            <div className="legacy-section-heading">
+              <div>
+                <p className="legacy-kicker">
+                  <LocalizedText
+                    en={isFeaturedVideoLive ? "Live from YouTube" : "Latest from YouTube"}
+                    id={isFeaturedVideoLive ? "Live dari YouTube" : "Terbaru di YouTube"}
                   />
+                </p>
+                <h2 id="latest-heading" className="legacy-display legacy-section-title">
+                  <LocalizedText
+                    en={isFeaturedVideoLive ? "Live now" : "Latest video"}
+                    id={isFeaturedVideoLive ? "Sedang live" : "Video terbaru"}
+                  />
+                </h2>
+              </div>
+              <a
+                className="legacy-text-link legacy-text-link-accent"
+                href={siteConfig.youtube.channelUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LocalizedText en="View all on YouTube" id="Lihat semua di YouTube" />
+                <ArrowUpRight aria-hidden="true" size={16} />
+              </a>
+            </div>
+
+            {featuredVideo ? (
+              <>
+                <div className="legacy-featured-video-grid">
+                  <div className="legacy-featured-video-player">
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${featuredVideo.id}?rel=0&modestbranding=1`}
+                      title={featuredVideo.title}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                    {isFeaturedVideoLive && (
+                      <span className="legacy-live-badge">
+                        <span className="legacy-live-dot" aria-hidden="true" />
+                        <LocalizedText en="Live now" id="Sedang live" />
+                      </span>
+                    )}
+                  </div>
+                  <div className="legacy-featured-video-copy">
+                    <p className="legacy-kicker legacy-kicker-accent">
+                      <LocalizedText
+                        en={isFeaturedVideoLive ? "Broadcasting now" : "Latest from the channel"}
+                        id={isFeaturedVideoLive ? "Sedang tayang" : "Terbaru dari kanal"}
+                      />
+                    </p>
+                    <h3 className="legacy-display legacy-featured-video-title">
+                      {featuredVideo.title}
+                    </h3>
+                    <p className="legacy-featured-video-description">
+                      {featuredVideo.description || (
+                        <LocalizedText
+                          en="Watch the latest message from Sukawarna Legacy."
+                          id="Saksikan pesan terbaru dari Sukawarna Legacy."
+                        />
+                      )}
+                    </p>
+                    <div className="legacy-featured-video-date">
+                      {featuredVideo.publishedAt ? (
+                        <LocalizedDate value={featuredVideo.publishedAt} />
+                      ) : (
+                        <LocalizedText en="From the Legacy channel" id="Dari kanal Legacy" />
+                      )}
+                    </div>
+                    <a
+                      className="legacy-button legacy-button-primary"
+                      href={getVideoWatchUrl(featuredVideo)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <LocalizedText
+                        en={isFeaturedVideoLive ? "Watch live" : "Watch on YouTube"}
+                        id={isFeaturedVideoLive ? "Tonton live" : "Tonton di YouTube"}
+                      />
+                      <ArrowUpRight aria-hidden="true" size={17} />
+                    </a>
+                  </div>
                 </div>
-                <CardContent className="p-4">
-                  <h3 className="text-white font-medium group-hover:text-red-400 transition-colors line-clamp-2">
-                    {video.title}
-                  </h3>
-                </CardContent>
-              </Card>
-            ))}
+
+                {secondaryVideos.length > 0 && (
+                  <div className="legacy-more-videos">
+                    <div className="legacy-more-videos-heading">
+                      <p className="legacy-kicker">
+                        <LocalizedText en="More from YouTube" id="Lainnya dari YouTube" />
+                      </p>
+                    </div>
+                    <div className="legacy-media-rail" role="list">
+                      {secondaryVideos.map((video) => (
+                        <a
+                          key={video.id}
+                          className="legacy-video-card"
+                          href={getVideoWatchUrl(video)}
+                          target="_blank"
+                          rel="noreferrer"
+                          role="listitem"
+                        >
+                          <div className="legacy-video-image-wrap">
+                            <img
+                              src={getVideoThumbnail(video)}
+                              alt=""
+                              className="legacy-video-image"
+                            />
+                            <span className="legacy-video-play" aria-hidden="true">
+                              <Play size={18} fill="currentColor" />
+                            </span>
+                          </div>
+                          <div className="legacy-video-meta">
+                            <span className="legacy-kicker">
+                              <LocalizedText
+                                en={video.liveBroadcastContent === "upcoming" ? "Upcoming" : "Sermon"}
+                                id={video.liveBroadcastContent === "upcoming" ? "Akan datang" : "Khotbah"}
+                              />
+                            </span>
+                            <h3>{video.title}</h3>
+                            <span>
+                              {video.publishedAt ? (
+                                <LocalizedDate value={video.publishedAt} />
+                              ) : (
+                                <LocalizedText en="Latest story" id="Cerita terbaru" />
+                              )}
+                            </span>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="legacy-empty-media">
+                <p>
+                  <LocalizedText
+                    en="The latest video will appear here when the channel is connected."
+                    id="Video terbaru akan muncul di sini saat kanal terhubung."
+                  />
+                </p>
+                <a className="legacy-text-link legacy-text-link-accent" href={siteConfig.youtube.channelUrl}>
+                  <LocalizedText en="Visit the channel" id="Kunjungi kanal" />
+                  <ArrowUpRight aria-hidden="true" size={16} />
+                </a>
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Social Media Section */}
-      <section id="events" className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Connect With Us
-          </h2>
-          <p className="text-slate-400 mb-10 max-w-2xl mx-auto">
-            Follow us on social media to stay updated with our latest events and announcements
-          </p>
+        <section className="legacy-paper-section" aria-labelledby="stories-heading">
+          <div className="legacy-shell">
+            <div className="legacy-story-grid">
+              <div className="legacy-story-copy">
+                <p className="legacy-kicker legacy-kicker-accent">
+                  <LocalizedText en="Featured story" id="Cerita pilihan" />
+                </p>
+                <p className="legacy-story-date">
+                  {featuredPost?.published_at ? (
+                    <LocalizedDate value={featuredPost.published_at} />
+                  ) : (
+                    <LocalizedText en="Public library" id="Pustaka publik" />
+                  )}
+                  <span aria-hidden="true">•</span>
+                  {featuredPost?.package?.name ?? <LocalizedText en="Legacy Blog" id="Blog Legacy" />}
+                </p>
+                <h2 id="stories-heading" className="legacy-display legacy-story-title">
+                  {featuredPost ? featuredStory.title : <LocalizedText en={editorialFallback.title} id="Cerita untuk perjalanan" />}
+                </h2>
+                <p className="legacy-story-excerpt">
+                  {featuredPost?.excerpt ?? (
+                    <LocalizedText
+                      en={editorialFallback.excerpt}
+                      id="Pustaka yang terus bertumbuh berisi pesan, refleksi, dan cara-cara praktis untuk tetap melekat pada Tuhan dan satu sama lain."
+                    />
+                  )}
+                </p>
+                <Link className="legacy-outline-button" href={featuredPost ? getPostHref(featuredPost) : "/blog"}>
+                  {featuredPost ? (
+                    <LocalizedText en="Read the story" id="Baca ceritanya" />
+                  ) : (
+                    <LocalizedText en="Explore the blog" id="Jelajahi blog" />
+                  )}
+                  <ArrowRight aria-hidden="true" size={18} />
+                </Link>
+              </div>
+              <div className="legacy-story-image-wrap">
+                <img
+                  src={featuredPost?.featured_image ?? editorialFallback.image}
+                  alt={featuredPost?.title ?? editorialFallback.title}
+                  className="legacy-story-image"
+                />
+              </div>
+            </div>
 
-          <div className="flex flex-wrap justify-center gap-6">
-            {/* Instagram */}
-            <a
-              href={siteConfig.social.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group"
-            >
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 p-0.5 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-pink-500/25">
-                <div className="w-full h-full bg-slate-900 rounded-2xl flex items-center justify-center group-hover:bg-slate-800 transition-colors">
-                  <Instagram className="w-10 h-10 text-white" />
+            <div className="legacy-package-section" aria-labelledby="packages-heading">
+              <div className="legacy-section-heading legacy-section-heading-paper">
+                <div>
+                  <p className="legacy-kicker">
+                    <LocalizedText en="Go deeper" id="Selami lebih dalam" />
+                  </p>
+                  <h2 id="packages-heading" className="legacy-display legacy-subsection-title">
+                    <LocalizedText en="Packages" id="Koleksi" />
+                  </h2>
+                </div>
+                <Link className="legacy-text-link legacy-text-link-dark" href="/blog">
+                  <LocalizedText en="View the library" id="Lihat pustaka" />
+                  <ArrowRight aria-hidden="true" size={16} />
+                </Link>
+              </div>
+
+              <div className="legacy-package-list">
+                {editorialContent.packages.length > 0 ? (
+                  editorialContent.packages.slice(0, 4).map((blogPackage) => (
+                    <Link
+                      key={blogPackage.id}
+                      href={`/blog/${blogPackage.slug}`}
+                      className="legacy-package-row"
+                    >
+                      <BookOpen aria-hidden="true" size={24} strokeWidth={1.5} />
+                      <span className="legacy-package-name">{blogPackage.name}</span>
+                      <span className="legacy-package-description">
+                        {blogPackage.description ?? (
+                          <LocalizedText en="A collection of stories and reflections." id="Kumpulan cerita dan refleksi." />
+                        )}
+                      </span>
+                      <span className="legacy-package-count">
+                        {blogPackage._count?.posts ?? 0} <LocalizedText en="posts" id="tulisan" />
+                      </span>
+                      <ArrowRight aria-hidden="true" size={18} />
+                    </Link>
+                  ))
+                ) : (
+                  <Link href="/blog" className="legacy-package-row">
+                    <BookOpen aria-hidden="true" size={24} strokeWidth={1.5} />
+                    <span className="legacy-package-name">
+                      <LocalizedText en="Legacy Blog" id="Blog Legacy" />
+                    </span>
+                    <span className="legacy-package-description">
+                      <LocalizedText
+                        en="Sermons, reflections, and resources for the road ahead."
+                        id="Khotbah, refleksi, dan sumber daya untuk perjalanan ke depan."
+                      />
+                    </span>
+                    <span className="legacy-package-count">
+                      <LocalizedText en="Explore" id="Jelajahi" />
+                    </span>
+                    <ArrowRight aria-hidden="true" size={18} />
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="visit" className="legacy-visit-section" aria-labelledby="visit-heading">
+          <div className="legacy-shell legacy-visit-grid">
+            <div>
+              <p className="legacy-kicker legacy-kicker-accent">
+                <LocalizedText en="Come as you are" id="Datang apa adanya" />
+              </p>
+              <h2 id="visit-heading" className="legacy-display legacy-visit-title">
+                <LocalizedText en="We'd love to see you in person." id="Kami menantikan kehadiranmu." />
+              </h2>
+              <p className="legacy-visit-copy">
+                <LocalizedText
+                  en="Join us for a real encounter, real people, and a real God."
+                  id="Bergabunglah untuk mengalami perjumpaan yang nyata, bersama orang-orang yang nyata, dan Tuhan yang nyata."
+                />
+              </p>
+            </div>
+
+            <div className="legacy-visit-card">
+              <div className="legacy-visit-row">
+                <CalendarDays aria-hidden="true" size={24} />
+                <div>
+                  <span className="legacy-kicker"><LocalizedText en="Day" id="Hari" /></span>
+                  <strong><LocalizedText en={siteConfig.service.day} id="Sabtu" /></strong>
                 </div>
               </div>
-              <p className="mt-3 text-slate-400 group-hover:text-white transition-colors font-medium">Instagram</p>
-            </a>
-
-            {/* YouTube */}
-            <a
-              href={siteConfig.social.youtube}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group"
-            >
-              <div className="w-24 h-24 rounded-2xl bg-red-600 p-0.5 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-red-500/25">
-                <div className="w-full h-full bg-slate-900 rounded-2xl flex items-center justify-center group-hover:bg-slate-800 transition-colors">
-                  <Youtube className="w-10 h-10 text-white" />
+              <div className="legacy-visit-row">
+                <Clock3 aria-hidden="true" size={24} />
+                <div>
+                  <span className="legacy-kicker"><LocalizedText en="Time" id="Waktu" /></span>
+                  <strong>{siteConfig.service.time}</strong>
                 </div>
               </div>
-              <p className="mt-3 text-slate-400 group-hover:text-white transition-colors font-medium">YouTube</p>
-            </a>
+              <div className="legacy-visit-row legacy-visit-row-location">
+                <MapPin aria-hidden="true" size={24} />
+                <div>
+                  <span className="legacy-kicker"><LocalizedText en="Location" id="Lokasi" /></span>
+                  <strong>{siteConfig.service.location}</strong>
+                  <span>{siteConfig.service.locationDetail}</span>
+                  <span>{siteConfig.service.address}</span>
+                </div>
+              </div>
+              <a
+                className="legacy-button legacy-button-primary legacy-button-wide"
+                href={siteConfig.service.mapsUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LocalizedText en="Open in Maps" id="Buka di Maps" />
+                <ArrowUpRight aria-hidden="true" size={18} />
+              </a>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       <Footer />
     </div>

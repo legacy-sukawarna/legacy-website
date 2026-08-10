@@ -4,26 +4,25 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Analytics } from "@vercel/analytics/next";
 import { QueryProvider } from "@/providers/query-provider";
-import { PublicAuthProvider } from "@/providers/public-auth-provider";
-import { createClient } from "@/lib/supabase/server";
+import { LanguageProvider } from "@/providers/language-provider";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : "https://localhost:3000";
+  : process.env.NEXT_PUBLIC_SITE_URL || "https://sukawarna-legacy.web.id";
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Legacy Saturday Service",
-  description: "Youth Church Community",
+  title: "Sukawarna Legacy — Attach With God, Attach With Others",
+  description: "A youth church community in Bandung, Indonesia.",
   openGraph: {
-    title: "Legacy Saturday Service",
-    description: "Youth Church Community",
+    title: "Sukawarna Legacy — Attach With God, Attach With Others",
+    description: "A youth church community in Bandung, Indonesia.",
     images: ["/assets/legacy-logo-white.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Legacy Saturday Service",
-    description: "Youth Church Community",
+    title: "Sukawarna Legacy — Attach With God, Attach With Others",
+    description: "A youth church community in Bandung, Indonesia.",
     images: ["/assets/legacy-logo-white.png"],
   },
 };
@@ -33,29 +32,22 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isAuthenticated = !!user;
-
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <QueryProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            forcedTheme="dark"
-            disableTransitionOnChange
-          >
-            <PublicAuthProvider isAuthenticated={isAuthenticated}>
-              <main className="flex flex-col h-screen">{children}</main>
-            </PublicAuthProvider>
-            <Toaster />
-            <Analytics />
-          </ThemeProvider>
+          <LanguageProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              forcedTheme="dark"
+              disableTransitionOnChange
+            >
+              <div className="min-h-[100dvh]">{children}</div>
+              <Toaster />
+              <Analytics />
+            </ThemeProvider>
+          </LanguageProvider>
         </QueryProvider>
       </body>
     </html>

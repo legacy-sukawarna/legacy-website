@@ -1,0 +1,27 @@
+services:
+  website:
+    build:
+      context: .
+      dockerfile: Dockerfile.public
+      args:
+        NEXT_PUBLIC_CONTENT_API_URL: ${NEXT_PUBLIC_CONTENT_API_URL:-http://content-api:3005}
+        NEXT_PUBLIC_PUBLIC_SITE_ONLY: ${NEXT_PUBLIC_PUBLIC_SITE_ONLY:-true}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://127.0.0.1:3120}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    env_file:
+      - ${APP_ENV_FILE:-.env.staging}
+    environment:
+      HOSTNAME: 0.0.0.0
+      NODE_ENV: production
+      PORT: 3000
+    networks:
+      - legacy-public-staging
+    ports:
+      - "127.0.0.1:3120:3000"
+    restart: unless-stopped
+
+networks:
+  legacy-public-staging:
+    external: true
+    name: legacy-public-staging_default
