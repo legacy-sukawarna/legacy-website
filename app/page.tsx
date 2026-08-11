@@ -130,8 +130,8 @@ export default async function Index() {
 
             <div className="legacy-hero-image-wrap">
               <Image
-                src="/assets/legacy-hero.png"
-                alt="Young adults worshipping together at Sukawarna Legacy"
+                src="/assets/legacy-25.jpg"
+                alt="People embracing during worship at Sukawarna Legacy"
                 fill
                 priority
                 sizes="(max-width: 767px) 100vw, 58vw"
