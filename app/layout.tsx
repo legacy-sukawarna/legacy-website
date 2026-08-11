@@ -10,6 +10,13 @@ const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : process.env.NEXT_PUBLIC_SITE_URL || "https://sukawarna-legacy.web.id";
 
+const previewImage = {
+  url: "/assets/legacy-preview.jpg",
+  width: 1200,
+  height: 630,
+  alt: "Sukawarna Legacy community gathering",
+};
+
 export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "Sukawarna Legacy — Attach With God, Attach With Others",
@@ -17,13 +24,13 @@ export const metadata = {
   openGraph: {
     title: "Sukawarna Legacy — Attach With God, Attach With Others",
     description: "A youth church community in Bandung, Indonesia.",
-    images: ["/assets/legacy-logo-white.png"],
+    images: [previewImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "Sukawarna Legacy — Attach With God, Attach With Others",
     description: "A youth church community in Bandung, Indonesia.",
-    images: ["/assets/legacy-logo-white.png"],
+    images: [previewImage.url],
   },
 };
 
