@@ -1,6 +1,12 @@
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID || "UC60FtWzckVLMnLivRRWI8kw";
+
+// Uploads playlist = channel ID with "UC" replaced by "UU"
+const getUploadsPlaylistId = (channelId: string) =>
+  channelId.replace(/^UC/, "UU");
+
 const YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
+const YOUTUBE_PLAYLIST_URL = "https://www.googleapis.com/youtube/v3/playlistItems";
 const YOUTUBE_REVALIDATE_LIVE_SECONDS = 60;    // 1 min — fast live detection
 const YOUTUBE_REVALIDATE_VIDEOS_SECONDS = 300; // 5 min — regular video list
 
@@ -15,21 +21,31 @@ export interface YouTubeVideo {
   liveBroadcastContent: YouTubeBroadcastContent;
 }
 
-type YouTubeSearchItem = {
-  id?: {
-    videoId?: string;
-  };
+type YouTubePlaylistItem = {
   snippet?: {
     title?: string;
     description?: string;
     publishedAt?: string;
-    liveBroadcastContent?: string;
     thumbnails?: {
       maxres?: { url?: string };
       high?: { url?: string };
       medium?: { url?: string };
       default?: { url?: string };
     };
+    resourceId?: {
+      videoId?: string;
+    };
+  };
+};
+
+type YouTubePlaylistResponse = {
+  items?: YouTubePlaylistItem[];
+};
+
+type YouTubeSearchItem = {
+  id?: { videoId?: string };
+  snippet?: {
+    liveBroadcastContent?: string;
   };
 };
 
@@ -50,40 +66,36 @@ const normalizeBroadcastContent = (value: string | undefined): YouTubeBroadcastC
   return "none";
 };
 
-const getSearchVideos = async (
-  maxResults: number,
-  eventType?: "live",
-): Promise<YouTubeVideo[]> => {
+/**
+ * Fetch latest videos via the uploads playlist.
+ * This includes live stream archives that the Search API misses.
+ */
+const getPlaylistVideos = async (maxResults: number): Promise<YouTubeVideo[]> => {
   if (!YOUTUBE_API_KEY) return [];
+
+  const playlistId = getUploadsPlaylistId(CHANNEL_ID);
 
   const params = new URLSearchParams({
     key: YOUTUBE_API_KEY,
-    channelId: CHANNEL_ID,
+    playlistId,
     part: "snippet",
-    order: "date",
-    type: "video",
     maxResults: String(maxResults),
   });
 
-  if (eventType) params.set("eventType", eventType);
-
-  // Live check is short-cached; regular video list refreshes every 5 min
-  const fetchOptions = eventType === "live"
-    ? { next: { revalidate: YOUTUBE_REVALIDATE_LIVE_SECONDS } }
-    : { next: { revalidate: YOUTUBE_REVALIDATE_VIDEOS_SECONDS } };
-
   try {
-    const response = await fetch(`${YOUTUBE_SEARCH_URL}?${params.toString()}`, fetchOptions);
+    const response = await fetch(`${YOUTUBE_PLAYLIST_URL}?${params.toString()}`, {
+      next: { revalidate: YOUTUBE_REVALIDATE_VIDEOS_SECONDS },
+    });
 
     if (!response.ok) {
-      console.error("YouTube API error:", response.status);
+      console.error("YouTube playlist API error:", response.status);
       return [];
     }
 
-    const data = (await response.json()) as YouTubeSearchResponse;
+    const data = (await response.json()) as YouTubePlaylistResponse;
 
     return (data.items ?? []).flatMap((item) => {
-      const id = item.id?.videoId;
+      const id = item.snippet?.resourceId?.videoId;
       const snippet = item.snippet;
 
       if (!id || !snippet?.title) return [];
@@ -99,12 +111,53 @@ const getSearchVideos = async (
           snippet.thumbnails?.medium?.url ??
           snippet.thumbnails?.default?.url ??
           "",
-        liveBroadcastContent: normalizeBroadcastContent(snippet.liveBroadcastContent),
+        liveBroadcastContent: "none" as YouTubeBroadcastContent,
       }];
     });
   } catch (error) {
-    console.error("Failed to fetch YouTube videos:", error);
+    console.error("Failed to fetch YouTube playlist:", error);
     return [];
+  }
+};
+
+/**
+ * Check for an active livestream. Uses Search API (only needed for live detection).
+ */
+const getLiveVideo = async (): Promise<YouTubeVideo | null> => {
+  if (!YOUTUBE_API_KEY) return null;
+
+  const params = new URLSearchParams({
+    key: YOUTUBE_API_KEY,
+    channelId: CHANNEL_ID,
+    part: "snippet",
+    eventType: "live",
+    type: "video",
+    maxResults: "1",
+  });
+
+  try {
+    const response = await fetch(`${YOUTUBE_SEARCH_URL}?${params.toString()}`, {
+      next: { revalidate: YOUTUBE_REVALIDATE_LIVE_SECONDS },
+    });
+
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as YouTubeSearchResponse;
+    const item = data.items?.[0];
+    const id = item?.id?.videoId;
+
+    if (!id) return null;
+
+    return {
+      id,
+      title: "Live now",
+      description: "",
+      publishedAt: new Date().toISOString(),
+      thumbnail: `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`,
+      liveBroadcastContent: "live",
+    };
+  } catch {
+    return null;
   }
 };
 
@@ -114,13 +167,15 @@ export async function getChannelVideos(maxResults = 12): Promise<YouTubeVideo[]>
     return [];
   }
 
-  const [liveVideos, latestVideos] = await Promise.all([
-    getSearchVideos(1, "live"),
-    getSearchVideos(maxResults),
+  const [liveVideo, playlistVideos] = await Promise.all([
+    getLiveVideo(),
+    getPlaylistVideos(maxResults),
   ]);
-  const seenIds = new Set<string>();
 
-  return [...liveVideos, ...latestVideos]
+  const seenIds = new Set<string>();
+  const all = liveVideo ? [liveVideo, ...playlistVideos] : playlistVideos;
+
+  return all
     .filter((video) => {
       if (seenIds.has(video.id)) return false;
       seenIds.add(video.id);
