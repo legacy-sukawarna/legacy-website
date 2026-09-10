@@ -1,7 +1,8 @@
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID || "UC60FtWzckVLMnLivRRWI8kw";
 const YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
-const YOUTUBE_REVALIDATE_SECONDS = 600;
+const YOUTUBE_REVALIDATE_LIVE_SECONDS = 60;    // 1 min — fast live detection
+const YOUTUBE_REVALIDATE_VIDEOS_SECONDS = 300; // 5 min — regular video list
 
 export type YouTubeBroadcastContent = "live" | "upcoming" | "none";
 
@@ -36,6 +37,14 @@ type YouTubeSearchResponse = {
   items?: YouTubeSearchItem[];
 };
 
+const decodeHtmlEntities = (text: string): string =>
+  text
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+
 const normalizeBroadcastContent = (value: string | undefined): YouTubeBroadcastContent => {
   if (value === "live" || value === "upcoming") return value;
   return "none";
@@ -58,10 +67,13 @@ const getSearchVideos = async (
 
   if (eventType) params.set("eventType", eventType);
 
+  // Live check is short-cached; regular video list refreshes every 5 min
+  const fetchOptions = eventType === "live"
+    ? { next: { revalidate: YOUTUBE_REVALIDATE_LIVE_SECONDS } }
+    : { next: { revalidate: YOUTUBE_REVALIDATE_VIDEOS_SECONDS } };
+
   try {
-    const response = await fetch(`${YOUTUBE_SEARCH_URL}?${params.toString()}`, {
-      next: { revalidate: YOUTUBE_REVALIDATE_SECONDS },
-    });
+    const response = await fetch(`${YOUTUBE_SEARCH_URL}?${params.toString()}`, fetchOptions);
 
     if (!response.ok) {
       console.error("YouTube API error:", response.status);
@@ -78,8 +90,8 @@ const getSearchVideos = async (
 
       return [{
         id,
-        title: snippet.title,
-        description: snippet.description ?? "",
+        title: decodeHtmlEntities(snippet.title),
+        description: decodeHtmlEntities(snippet.description ?? ""),
         publishedAt: snippet.publishedAt ?? "",
         thumbnail:
           snippet.thumbnails?.maxres?.url ??
