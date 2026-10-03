@@ -11,6 +11,7 @@ import {
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { HeroMedia } from "@/components/HeroMedia";
 import { YoutubeRefreshSection, YoutubeRefreshHeading } from "@/components/YoutubeRefreshSection";
 import { LocalizedDate } from "@/components/LocalizedDate";
 import { LocalizedText } from "@/components/LocalizedText";
@@ -120,20 +121,7 @@ export default async function Index() {
               </div>
             </div>
 
-            <div className="legacy-hero-image-wrap">
-              <Image
-                src="/assets/legacy-25.jpg"
-                alt="People embracing during worship at Sukawarna Legacy"
-                fill
-                priority
-                sizes="(max-width: 767px) 100vw, 58vw"
-                className="legacy-hero-image"
-              />
-              <div className="legacy-hero-image-note">
-                <span><LocalizedText en="Saturday" id="Sabtu" /></span>
-                <span>5PM WIB</span>
-              </div>
-            </div>
+            <HeroMedia key={siteConfig.heroVideo?.src ?? "photo"} video={siteConfig.heroVideo} />
           </div>
         </section>
 
@@ -168,6 +156,71 @@ export default async function Index() {
                 </a>
               </div>
             )}
+          </div>
+        </section>
+
+        <section id="connect" className="legacy-connect-section" aria-labelledby="connect-heading">
+          <div className="legacy-shell">
+            <div className="legacy-content-split">
+              <div>
+                <p className="legacy-kicker legacy-kicker-accent">
+                  <LocalizedText en="Grow at Connect" id="Bertumbuh di Connect" />
+                </p>
+                <h2 id="connect-heading" className="legacy-display legacy-content-title">
+                  <LocalizedText
+                    en={<>Life is better<br />when we grow<br />together.</>}
+                    id={<>Hidup lebih baik<br />saat kita bertumbuh<br />bersama.</>}
+                  />
+                </h2>
+              </div>
+              <div className="legacy-content-copy">
+                <p>
+                  <LocalizedText
+                    en="CONNECT is Legacy's Christ-centered small-group community. Grounded in God's Word, we grow as disciples and make disciples — together as one family in Christ."
+                    id="CONNECT adalah komunitas kelompok kecil Legacy yang berpusat pada Kristus. Berlandaskan Firman Tuhan, kita bertumbuh sebagai murid dan memuridkan — bersama sebagai satu keluarga dalam Kristus."
+                  />
+                </p>
+                <div className="legacy-content-actions">
+                  <a className="legacy-button legacy-button-primary" href={siteConfig.resources.connectRegistrationUrl} target="_blank" rel="noreferrer">
+                    <span><LocalizedText en="Join our Connect" id="Bergabung di Connect" /></span>
+                    <ArrowUpRight aria-hidden="true" size={18} />
+                  </a>
+                  <a className="legacy-text-link legacy-text-link-dark" href={siteConfig.resources.aboutConnectUrl} target="_blank" rel="noreferrer">
+                    <LocalizedText en="About Connect" id="Tentang Connect" />
+                    <ArrowUpRight aria-hidden="true" size={16} />
+                  </a>
+                </div>
+                <p className="legacy-content-note">
+                  <LocalizedText en="Registration opens in the member system. Google sign-in required." id="Pendaftaran dibuka di sistem jemaat. Masuk dengan akun Google diperlukan." />
+                </p>
+              </div>
+            </div>
+            <ul className="legacy-connect-tracks">
+              <li><span className="legacy-kicker">01 / Connect</span><h3><LocalizedText en={<>High<br />School</>} id={<>Sekolah<br />Menengah</>} /></h3></li>
+              <li><span className="legacy-kicker">02 / Connect</span><h3><LocalizedText en={<>College<br />/ Uni</>} id={<>Kuliah<br />/ Universitas</>} /></h3></li>
+              <li><span className="legacy-kicker">03 / Connect</span><h3><LocalizedText en={<>Young Adult<br />Professional</>} id={<>Dewasa Muda<br />Profesional</>} /></h3></li>
+              <li><span className="legacy-kicker">04 / Connect</span><h3><LocalizedText en={<>Couple<br />/ Family</>} id={<>Pasangan<br />/ Keluarga</>} /></h3></li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="devotional" className="legacy-bible-section" aria-labelledby="bible-heading">
+          <div className="legacy-shell legacy-content-split">
+            <div>
+              <p className="legacy-kicker"><LocalizedText en="Place for growth / Devotional" id="Tempat bertumbuh / Saat teduh" /></p>
+              <h2 id="bible-heading" className="legacy-display legacy-content-title">
+                <LocalizedText en={<>Stay in the Word.<br />Grow in community.</>} id={<>Tekun dalam Firman.<br />Bertumbuh dalam komunitas.</>} />
+              </h2>
+            </div>
+            <div className="legacy-content-copy">
+              <h3>Bible Community</h3>
+              <p><LocalizedText en="Build a daily Bible-reading rhythm and track your journey with the Legacy community." id="Bangun kebiasaan membaca Alkitab setiap hari dan catat perjalananmu bersama komunitas Legacy." /></p>
+              <a className="legacy-button legacy-button-light" href={siteConfig.resources.bibleCommunityUrl} target="_blank" rel="noreferrer">
+                <span><LocalizedText en="Open Bible Community" id="Buka Bible Community" /></span>
+                <ArrowUpRight aria-hidden="true" size={18} />
+              </a>
+              <p className="legacy-content-note"><LocalizedText en="Sign in to access the reading tracker." id="Masuk untuk mengakses catatan bacaan." /></p>
+            </div>
           </div>
         </section>
 
@@ -273,6 +326,38 @@ export default async function Index() {
                 )}
               </div>
             </div>
+          </div>
+        </section>
+
+        <section id="about" className="legacy-about-section" aria-labelledby="about-heading">
+          <div className="legacy-shell">
+            <div className="legacy-content-split legacy-about-intro">
+              <div>
+                <p className="legacy-kicker legacy-kicker-accent"><LocalizedText en="Get to know Legacy" id="Kenali Legacy" /></p>
+                <h2 id="about-heading" className="legacy-display legacy-content-title">
+                  <LocalizedText en={<>A place to<br />call home.</>} id={<>Tempat untuk<br />merasa di rumah.</>} />
+                </h2>
+              </div>
+              <div className="legacy-content-copy">
+                <p><LocalizedText en="Established in 2018 and part of GBI Sukawarna, Legacy brings together the next generation — from high school and university to young professionals and young families." id="Berdiri pada 2018 dan menjadi bagian dari GBI Sukawarna, Legacy menyatukan generasi berikutnya — dari pelajar dan mahasiswa hingga profesional muda dan keluarga muda." /></p>
+                <p className="legacy-alive-vision">
+                  <span className="legacy-kicker"><LocalizedText en="Our vision / ALIVE" id="Visi kami / ALIVE" /></span><br />
+                  Attach · Love · Identity · Veil · Empower
+                </p>
+              </div>
+            </div>
+            <a className="legacy-profile-card" href={siteConfig.resources.profilePdfUrl} target="_blank" rel="noreferrer">
+              <Image src="/assets/legacy-profile-2026-cover.jpg" alt="" width={990} height={1400} sizes="(max-width: 767px) 36vw, 180px" />
+              <div>
+                <p className="legacy-kicker legacy-kicker-accent"><LocalizedText en="Church profile / PDF / 17 pages" id="Profil gereja / PDF / 17 halaman" /></p>
+                <h3><LocalizedText en="Meet Legacy." id="Kenali Legacy." /></h3>
+                <p><LocalizedText en="Our vision, values, Connect community and leadership." id="Visi, nilai, komunitas Connect, dan kepemimpinan kami." /></p>
+                <span className="legacy-text-link">
+                  <LocalizedText en="Read the Legacy profile" id="Baca profil Legacy" />
+                  <ArrowUpRight aria-hidden="true" size={16} />
+                </span>
+              </div>
+            </a>
           </div>
         </section>
 

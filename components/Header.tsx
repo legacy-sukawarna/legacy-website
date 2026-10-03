@@ -9,6 +9,8 @@ import LanguageToggle from "@/components/LanguageToggle";
 import { LocalizedText } from "@/components/LocalizedText";
 
 const navLinks = [
+  { href: "/#connect", en: "Connect", id: "Connect" },
+  { href: "/#about", en: "About", id: "Tentang" },
   { href: "/#visit", en: "Visit", id: "Kunjungi" },
   { href: "/sermons", en: "Sermons", id: "Khotbah" },
   { href: "/blog", en: "Blog", id: "Blog" },

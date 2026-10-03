@@ -420,6 +420,222 @@
     background: var(--legacy-ink);
   }
 
+  .legacy-hero-video-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    background: #171615;
+  }
+
+  .legacy-hero-video-wrap::after {
+    display: none;
+  }
+
+  .legacy-hero-video {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    background: var(--legacy-ink);
+  }
+
+  .legacy-connect-section,
+  .legacy-about-section {
+    padding-block: clamp(3.5rem, 7.5vw, 6.875rem);
+  }
+
+  #connect,
+  #devotional,
+  #about {
+    scroll-margin-top: 6rem;
+  }
+
+  .legacy-connect-section {
+    color: var(--legacy-ink);
+    background: var(--legacy-paper);
+  }
+
+  .legacy-connect-section .legacy-kicker-accent,
+  .legacy-connect-section .legacy-text-link:hover,
+  .legacy-connect-section .legacy-text-link:focus-visible {
+    color: #a63d27;
+  }
+
+  .legacy-connect-section .legacy-button-primary {
+    color: var(--legacy-ink);
+  }
+
+  .legacy-content-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 7vw;
+    align-items: center;
+  }
+
+  .legacy-content-title {
+    max-width: 41.25rem;
+    margin: 1.25rem 0 0;
+    font-size: clamp(2.625rem, 5.7vw, 4.75rem);
+    overflow-wrap: anywhere;
+  }
+
+  .legacy-content-copy {
+    max-width: 36.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+  }
+
+  .legacy-content-copy p {
+    margin: 0 0 1.5rem;
+  }
+
+  .legacy-content-copy h3 {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    letter-spacing: -0.03em;
+  }
+
+  .legacy-content-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .legacy-content-actions a,
+  .legacy-bible-section .legacy-button {
+    max-width: 100%;
+  }
+
+  .legacy-content-actions .legacy-button span,
+  .legacy-bible-section .legacy-button span {
+    min-width: 0;
+  }
+
+  .legacy-content-actions svg,
+  .legacy-bible-section .legacy-button svg,
+  .legacy-profile-card svg {
+    flex-shrink: 0;
+  }
+
+  .legacy-content-copy .legacy-content-note {
+    margin: 1rem 0 0;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    opacity: 0.75;
+  }
+
+  .legacy-connect-tracks {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin: 3.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .legacy-connect-tracks li {
+    border-top: 1px solid #aaa69e;
+    padding-top: 1.5rem;
+  }
+
+  .legacy-connect-tracks h3 {
+    margin: 1.25rem 0 0;
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    font-weight: 650;
+    letter-spacing: -0.05em;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+  }
+
+  .legacy-connect-tracks .legacy-kicker {
+    color: #a63d27;
+    overflow-wrap: anywhere;
+  }
+
+  .legacy-bible-section {
+    padding-block: clamp(3.25rem, 6.4vw, 5.625rem);
+    color: var(--legacy-ink);
+    background: var(--legacy-accent);
+  }
+
+  .legacy-bible-section .legacy-content-copy .legacy-content-note {
+    opacity: 1;
+  }
+
+  .legacy-button-light {
+    border-color: var(--legacy-paper);
+    color: var(--legacy-ink);
+    background: var(--legacy-paper);
+  }
+
+  .legacy-button-light:hover,
+  .legacy-button-light:focus-visible {
+    border-color: var(--legacy-ink);
+  }
+
+  .legacy-about-section {
+    background: var(--legacy-ink);
+  }
+
+  .legacy-about-section .legacy-content-copy {
+    color: #aaa69e;
+  }
+
+  .legacy-about-intro {
+    margin-bottom: 3.5rem;
+  }
+
+  .legacy-alive-vision {
+    color: var(--legacy-paper);
+    font-size: 0.9375rem;
+  }
+
+  .legacy-alive-vision .legacy-kicker {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    color: var(--legacy-accent);
+  }
+
+  .legacy-profile-card {
+    display: grid;
+    grid-template-columns: 11.25rem minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: center;
+    min-height: 19.375rem;
+    border: 1px solid #393737;
+    padding: 1.75rem;
+    color: var(--legacy-paper);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .legacy-profile-card:hover,
+  .legacy-profile-card:focus-visible {
+    border-color: var(--legacy-accent);
+  }
+
+  .legacy-profile-card img {
+    width: 100%;
+    height: auto;
+  }
+
+  .legacy-profile-card h3 {
+    margin: 1.25rem 0 0.875rem;
+    font-size: clamp(1.5625rem, 3vw, 2.375rem);
+    font-weight: 650;
+    letter-spacing: -0.05em;
+    line-height: 1.1;
+  }
+
+  .legacy-profile-card p:not(.legacy-kicker) {
+    margin: 0 0 1.375rem;
+    color: #aaa69e;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
   .legacy-section-heading {
     display: flex;
     align-items: flex-end;
@@ -1145,6 +1361,70 @@
 }
 
 @media (max-width: 767px) {
+  .legacy-content-split {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .legacy-content-title {
+    font-size: 2.8125rem;
+  }
+  .legacy-content-copy {
+    font-size: 0.9375rem;
+  }
+
+  .legacy-connect-tracks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 2.625rem;
+    gap: 2rem 1.5rem;
+  }
+
+  .legacy-connect-tracks h3 {
+    font-size: 1.625rem;
+  }
+  .legacy-about-intro {
+    margin-bottom: 2.25rem;
+  }
+
+  .legacy-profile-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.125rem;
+    min-height: 0;
+    padding: 1.25rem;
+  }
+
+  .legacy-profile-card img {
+    width: 36%;
+    max-width: 11.25rem;
+  }
+
+  .legacy-profile-card > div {
+    flex: 1 1 8rem;
+    min-width: 0;
+  }
+
+  .legacy-profile-card h3 {
+    margin-top: 0.9375rem;
+    font-size: 1.8125rem;
+  }
+
+  .legacy-profile-card p:not(.legacy-kicker) {
+    margin-bottom: 1rem;
+    font-size: 0.75rem;
+  }
+
+  .legacy-profile-card .legacy-kicker {
+    font-size: 0.5625rem;
+  }
+  .legacy-profile-card .legacy-text-link {
+    font-size: 0.6875rem;
+  }
+
+  .legacy-hero-video-wrap {
+    padding: 1.5rem 1rem;
+  }
+
   .legacy-shell {
     width: min(100% - 2rem, 90rem);
   }
