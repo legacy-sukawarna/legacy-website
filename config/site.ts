@@ -1,7 +1,25 @@
 // Site configuration
 // Update these values as needed
 
+export type HeroVideo = {
+  // Direct video file URL or a path under public/, not a YouTube watch URL.
+  src: string;
+  captions: { src: string; language: string; label: string }[];
+};
+
 export const siteConfig = {
+  // Supply Ko Ivan's intended video and WebVTT captions when available.
+  // Until then, the homepage keeps the existing community photo.
+  heroVideo: null as HeroVideo | null,
+
+  // Verified destinations from Legacy's public Linktree and 2026 profile.
+  resources: {
+    connectRegistrationUrl: "https://system.sukawarna-legacy.web.id/forms/fill/connect-registration-0gcyhp",
+    aboutConnectUrl: "https://canva.link/legacyconnect2026",
+    bibleCommunityUrl: "https://devotional.sukawarna-legacy.web.id/",
+    profilePdfUrl: "https://ugc.production.linktr.ee/d0a38116-f81e-40f3-abb5-122ebfff5fd5_LEGACY-PROFILE-2026.pdf",
+  },
+
   // Service Information
   service: {
     name: "Legacy Saturday Service",

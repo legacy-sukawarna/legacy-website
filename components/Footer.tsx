@@ -29,6 +29,9 @@ export default function Footer() {
               <LocalizedText en="Explore" id="Jelajahi" />
             </p>
             <nav className="legacy-footer-links" aria-label="Explore">
+              <Link href="/#connect"><LocalizedText en="Connect" id="Connect" /></Link>
+              <Link href="/#devotional"><LocalizedText en="Bible Community" id="Bible Community" /></Link>
+              <Link href="/#about"><LocalizedText en="About Legacy" id="Tentang Legacy" /></Link>
               <Link href="/#visit"><LocalizedText en="Visit" id="Kunjungi" /></Link>
               <Link href="/sermons"><LocalizedText en="Sermons" id="Khotbah" /></Link>
               <Link href="/blog"><LocalizedText en="Blog" id="Blog" /></Link>
