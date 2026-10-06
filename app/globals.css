@@ -2044,6 +2044,7 @@
   }
 
   .legacy-article-footer-section {
+    display: flow-root;
     padding-block: 0 clamp(4rem, 8vw, 7rem);
   }
 
