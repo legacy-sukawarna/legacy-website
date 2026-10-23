@@ -42,7 +42,7 @@ export default function ConnectReportButton({
         }
       );
       const blob = new Blob([response.data], {
-        type: response.headers["content-type"],
+        type: response.headers["content-type"]?.toString(),
       });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
