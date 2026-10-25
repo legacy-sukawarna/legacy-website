@@ -11,11 +11,13 @@ import {
   getPublicPosts,
   type PublicPackage,
 } from "@/lib/public-content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Blog | Sukawarna Legacy",
-  description: "Read our latest posts and updates",
-};
+export const metadata = buildPageMetadata({
+  title: "Blog",
+  description: "Read the latest stories, reflections and updates from Sukawarna Legacy.",
+  path: "/blog",
+});
 
 export default async function BlogPage({
   searchParams,

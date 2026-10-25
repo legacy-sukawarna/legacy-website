@@ -17,7 +17,14 @@ import { LocalizedDate } from "@/components/LocalizedDate";
 import { LocalizedText } from "@/components/LocalizedText";
 import { siteConfig } from "@/config/site";
 import { getPublicPackages, getPublicPosts, type PublicPost } from "@/lib/public-content";
+import { buildPageMetadata, SITE_DESCRIPTION, SITE_TAGLINE_TITLE } from "@/lib/seo";
 import { getChannelVideos, type YouTubeVideo } from "@/lib/youtube";
+
+export const metadata = buildPageMetadata({
+  title: SITE_TAGLINE_TITLE,
+  description: SITE_DESCRIPTION,
+  path: "/",
+});
 
 const getEditorialContent = async () => {
   const [postsResponse, packages] = await Promise.all([

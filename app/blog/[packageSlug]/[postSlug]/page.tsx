@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import { LocalizedDate } from "@/components/LocalizedDate";
 import { LocalizedText } from "@/components/LocalizedText";
 import { getPublicPackageFilter, getPublicPostBySlug } from "@/lib/public-content";
+import { buildPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -20,15 +21,17 @@ export async function generateMetadata({
     return { title: "Post Not Found | Sukawarna Legacy" };
   }
 
-  return {
-    title: `${post.title} | Sukawarna Legacy`,
-    description: post.excerpt || `Read ${post.title}`,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      images: post.featured_image ? [post.featured_image] : [],
+  return buildPageMetadata({
+    title: post.title,
+    description: post.excerpt || post.content || `Read ${post.title}`,
+    path: post.package ? `/blog/${post.package.slug}/${post.slug}` : `/blog`,
+    image: post.featured_image,
+    article: {
+      publishedTime: post.published_at,
+      authors: post.author?.name ? [post.author.name] : undefined,
+      section: post.package?.name,
     },
-  };
+  });
 }
 
 export default async function PostPage({

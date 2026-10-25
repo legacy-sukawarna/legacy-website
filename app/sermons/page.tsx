@@ -6,13 +6,15 @@ import Header from "@/components/Header";
 import { LocalizedDate } from "@/components/LocalizedDate";
 import { LocalizedText } from "@/components/LocalizedText";
 import { siteConfig } from "@/config/site";
+import { buildPageMetadata } from "@/lib/seo";
 import { getChannelVideos, type YouTubeVideo } from "@/lib/youtube";
 import { YoutubeRefreshSection, YoutubeRefreshHeading } from "@/components/YoutubeRefreshSection";
 
-export const metadata = {
-  title: "Sermons | Sukawarna Legacy",
-  description: "Watch our latest sermons and messages",
-};
+export const metadata = buildPageMetadata({
+  title: "Sermons",
+  description: "Watch the latest sermons and messages from Sukawarna Legacy.",
+  path: "/sermons",
+});
 
 export const dynamic = "force-dynamic";
 

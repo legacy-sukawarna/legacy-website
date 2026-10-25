@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { LocalizedText } from "@/components/LocalizedText";
 import { getPublicPackageBySlug } from "@/lib/public-content";
+import { buildPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -19,10 +20,12 @@ export async function generateMetadata({
     return { title: "Package Not Found | Sukawarna Legacy" };
   }
 
-  return {
-    title: `${pkg.name} | Blog | Sukawarna Legacy`,
-    description: pkg.description || `Posts in ${pkg.name}`,
-  };
+  return buildPageMetadata({
+    title: `${pkg.name} | Blog`,
+    description: pkg.description || `Posts in ${pkg.name} from Sukawarna Legacy.`,
+    path: `/blog/${pkg.slug}`,
+    image: pkg.posts?.find((post) => post.featured_image)?.featured_image,
+  });
 }
 
 export default async function PackagePage({
