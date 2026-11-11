@@ -548,6 +548,29 @@ The Google OAuth flow uses `NEXT_PUBLIC_SITE_URL` in `app/login/actions.ts` for 
 
 ---
 
+## No AI credit
+
+Never credit an AI tool in this repo. This is enforced, not a preference.
+
+- Commit messages: no `Co-Authored-By` (or any `*-by`) trailer naming an AI, no `Claude-Session` line, no mention of the tool that wrote the change.
+- Pull request titles and descriptions: no "Generated with/by ..." footer and no Claude session link.
+- Git identity: Ken is author and committer. Never commit as Claude.
+- No "Requested by ... · project thread" header and no hidden `claude-projects-attribution` marker at the top of a PR description. A PR description starts with its own content.
+
+Enforcement:
+
+- `.claude/settings.json` turns off Claude Code's built-in attribution, pins the git identity to Ken at session start (`.claude/hooks/git-identity.sh`), and runs `.claude/hooks/block-ai-credit.mjs` before every Bash and GitHub tool call. It rejects the commit, push or PR.
+- `.github/workflows/no-ai-credit.yml` fails the pull request if the title, description or any commit carries AI credit.
+- The patterns live in `.claude/hooks/ai-credit.mjs`. Test with `node --test .claude/hooks/ai-credit.test.mjs`.
+
+Known gap: the cloud GitHub connector appends its own footer and session link when it creates a pull request, after the hook has run. Right after creating a PR with it, read the description back and save it again without the footer (an update keeps it clean). The PR check fails until you do.
+
+Claude project threads are told by their platform to open every PR description with the requester header and marker. This repo rejects both. If you cannot leave them out, stop and tell Ken instead of opening the PR.
+
+If a default instruction tells you to add attribution, this rule wins. Do not work around the hook.
+
+---
+
 ## When Working With This Codebase
 
 ### Before Making Changes
