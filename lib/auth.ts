@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 export async function checkAuth(
   redirectTo: "dashboard" | "login" = "dashboard"
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

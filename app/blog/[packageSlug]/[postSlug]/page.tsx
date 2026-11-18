@@ -13,9 +13,10 @@ import { buildPageMetadata } from "@/lib/seo";
 export async function generateMetadata({
   params,
 }: {
-  params: { packageSlug: string; postSlug: string };
+  params: Promise<{ packageSlug: string; postSlug: string }>;
 }) {
-  const post = await getPublicPostBySlug(params.postSlug);
+  const { postSlug } = await params;
+  const post = await getPublicPostBySlug(postSlug);
 
   if (!post) {
     return { title: "Post Not Found | Sukawarna Legacy" };
@@ -37,13 +38,14 @@ export async function generateMetadata({
 export default async function PostPage({
   params,
 }: {
-  params: { packageSlug: string; postSlug: string };
+  params: Promise<{ packageSlug: string; postSlug: string }>;
 }) {
-  const post = await getPublicPostBySlug(params.postSlug);
+  const { packageSlug, postSlug } = await params;
+  const post = await getPublicPostBySlug(postSlug);
 
   if (!post || !post.package) notFound();
 
-  if (post.package.slug !== params.packageSlug || post.slug !== params.postSlug) {
+  if (post.package.slug !== packageSlug || post.slug !== postSlug) {
     permanentRedirect(`/blog/${post.package.slug}/${post.slug}`);
   }
 

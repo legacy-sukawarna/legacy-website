@@ -22,17 +22,18 @@ export const metadata = buildPageMetadata({
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: { package?: string };
+  searchParams: Promise<{ package?: string }>;
 }) {
+  const { package: packageFilter } = await searchParams;
   const [postsData, packages] = await Promise.all([
-    getPublicPosts(searchParams.package, 20),
+    getPublicPosts(packageFilter, 20),
     getPublicPackages(),
   ]);
 
   const posts = postsData.results;
   const selectedPackage = packages.find(
     (pkg: PublicPackage) =>
-      pkg.id === searchParams.package || pkg.slug === searchParams.package,
+      pkg.id === packageFilter || pkg.slug === packageFilter,
   );
 
   return (

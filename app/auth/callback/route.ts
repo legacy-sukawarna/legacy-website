@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 
   if (code) {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       const session: AuthTokenResponse =
         await supabase.auth.exchangeCodeForSession(code);
       // Call backend auth callback to create/update user
