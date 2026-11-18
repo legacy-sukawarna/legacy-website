@@ -12,9 +12,10 @@ import { buildPageMetadata } from "@/lib/seo";
 export async function generateMetadata({
   params,
 }: {
-  params: { packageSlug: string };
+  params: Promise<{ packageSlug: string }>;
 }) {
-  const pkg = await getPublicPackageBySlug(params.packageSlug);
+  const { packageSlug } = await params;
+  const pkg = await getPublicPackageBySlug(packageSlug);
 
   if (!pkg) {
     return { title: "Package Not Found | Sukawarna Legacy" };
@@ -31,12 +32,13 @@ export async function generateMetadata({
 export default async function PackagePage({
   params,
 }: {
-  params: { packageSlug: string };
+  params: Promise<{ packageSlug: string }>;
 }) {
-  const pkg = await getPublicPackageBySlug(params.packageSlug);
+  const { packageSlug } = await params;
+  const pkg = await getPublicPackageBySlug(packageSlug);
 
   if (!pkg) notFound();
-  if (pkg.slug !== params.packageSlug) permanentRedirect(`/blog/${pkg.slug}`);
+  if (pkg.slug !== packageSlug) permanentRedirect(`/blog/${pkg.slug}`);
 
   const posts = pkg.posts || [];
 
