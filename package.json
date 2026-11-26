@@ -10,7 +10,8 @@
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
     "release:major": "standard-version --release-as major",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:server-errors": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "config": {
     "commitizen": {
@@ -47,6 +48,7 @@
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-toggle-group": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@sentry/node": "11.16.0",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@tanstack/react-query": "^5.82.0",
